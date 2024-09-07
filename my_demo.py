@@ -40,29 +40,31 @@ def make_env(env_id: str, rank: int, seed: int = 0):
 
 if __name__ == '__main__':
     env_id = 'door_sac'
-    n_cpu = 2#60
+    n_cpu = 60
     sac_policy = 'MlpPolicy'
     tot_timesteps = 1000000
 
-    vec_env = SubprocVecEnv([make_env(env_id, i) for i in range(n_cpu)])
+    vec_env = SubprocVecEnv([make_env(env_id, i, False) for i in range(n_cpu)])
 
-    model = SAC(sac_policy, vec_env, train_freq=1, gradient_steps=2, verbose=1)
+    tmp_path = "/tmp/sb3_log/"
+    # set up logger
+    from stable_baselines3.common.logger import configure
+    new_logger = configure(tmp_path, ["stdout", "csv", "tensorboard"])
+
+    model = SAC(sac_policy, vec_env, train_freq=1, gradient_steps=2, verbose=1, tensorboard_log = f'./{env_id}_tensorboard/')
+    model.set_logger(new_logger)
     model.learn(total_timesteps=tot_timesteps, log_interval=4, progress_bar = True)
     model.save(env_id)
 
     del model
 
-    model.SAC.load(env_id, env=vec_env)
-    vec_env = model.get_env()
+    print('load model')
+    model = SAC.load(env_id, env=vec_env)
 
-    for i_episode in range(20):
-        observation = vec_env.reset()
-        for t in range(500):
-            vec_env.render()
-            action = vec_env.action_space.sample()
-            observation, reward, terminated, truncated, info = vec_env.step(action)
-            if terminated or truncated:
-                print("Episode finished after {} timesteps".format(t + 1))
-                observation, info = vec_env.reset()
-                vec_env.close()
-                break
+    obs = vec_env.reset()
+    for t in range(1000):
+    #while True:
+        action, _states = model.predict(obs)
+        #print(action)
+        obs, rewards, dones, info = vec_env.step(action)
+        vec_env.render()

@@ -245,7 +245,7 @@ class MyDoor(SingleArmEnv):
                 handle_qpos = self.sim.data.qpos[self.handle_qpos_addr]
                 reward += np.clip(0.25 * np.abs(handle_qpos / (0.5 * np.pi)), -0.25, 0.25)
             
-            # modified by virtualkss
+            # modified by virtualkss (240907)
             # Add hinge angle component
             open_reward = 0.3 - self.sim.data.qpos[self.hinge_qpos_addr]
             reward += open_reward
