@@ -20,7 +20,7 @@ pip install stable-baselines3[extra]
 ## https://pytorch.org/get-started/previous-versions/
 conda install pytorch==2.4.0 torchvision==0.19.0 torchaudio==2.4.0 pytorch-cuda=12.4 -c pytorch -c nvidia
 cd ..
-'''
+```
 
 # robosuite
 
