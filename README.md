@@ -1,3 +1,27 @@
+# Robosuite for articulated object manipulation
+- written by virtualkss@snu.ac.kr
+- Ubuntu 20.04 LTS, 22.04 LTS
+- Python 3.9
+- torch 2.4.0, CUDA 12.4
+```bibtex
+# setting virtual environment
+conda create -n rs4arti python=3.9
+conda activate rs4arti
+git clone https://github.com/bilab-manipulation/rs4arti.git
+
+# installation
+## https://robosuite.ai/docs/installation.html
+cd rs4arti
+pip install mujoco
+pip install -r requirements.txt
+pip install -r requirements-extra.txt
+## https://stable-baselines3.readthedocs.io/en/master/guide/install.html
+pip install stable-baselines3[extra]
+## https://pytorch.org/get-started/previous-versions/
+conda install pytorch==2.4.0 torchvision==0.19.0 torchaudio==2.4.0 pytorch-cuda=12.4 -c pytorch -c nvidia
+cd ..
+'''
+
 # robosuite
 
 ![gallery of_environments](docs/images/gallery.png)
