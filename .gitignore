@@ -1,3 +1,6 @@
+# modified by virtualkss (240907)
+*.zip
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
