@@ -16,16 +16,18 @@ def make_env(env_id: str, rank: int, render: bool, seed: int = 0):
         env = GymWrapper(
             suite.make(
                 "MyDoor",
-                robots="UR5e",  # use Sawyer robot
+                robots="Sawyer", # robosuite benchmark 기준 Sawyer 선택, joint velocity 씀  # use Sawyer robot
                 use_camera_obs=False,  # do not use pixel observations
                 has_offscreen_renderer=False,  # not needed since not using pixel obs
                 has_renderer=render,  # make sure we can render to the screen
                 reward_shaping=True,  # use dense rewards
                 control_freq=20,  # control should happen fast enough so that simulation looks smooth,
-                use_latch=False,
+                use_latch=False, # latch까지 있는 것은 너무 어려움
             )
         )
         env.reset(seed=seed + rank)
-        return env
+        from stable_baselines3.common.monitor import Monitor
+        return Monitor(env)
+        #return env
     set_random_seed(seed)
     return _init

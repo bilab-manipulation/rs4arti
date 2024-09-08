@@ -149,7 +149,7 @@ class MyDoor(SingleArmEnv):
         render_visual_mesh=True,
         render_gpu_device_id=-1,
         control_freq=20,
-        horizon=1000,
+        horizon=500,
         ignore_done=False,
         hard_reset=True,
         camera_names="agentview",
@@ -247,8 +247,8 @@ class MyDoor(SingleArmEnv):
             
             # modified by virtualkss (240907)
             # Add hinge angle component
-            open_reward = 0.3 - self.sim.data.qpos[self.hinge_qpos_addr]
-            reward += open_reward
+            #open_reward = 0.3 - self.sim.data.qpos[self.hinge_qpos_addr]
+            #reward += open_reward
 
         # Scale reward if requested
         if self.reward_scale is not None:
