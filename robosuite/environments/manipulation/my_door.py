@@ -131,10 +131,10 @@ class MyDoor(SingleArmEnv):
 
     def __init__(
         self,
-        robots='Panda',
+        robots='UR5e',#'Panda',
         env_configuration="default",
-        #controller_configs=load_controller_config(default_controller="OSC_POSE"),
-        controller_configs=load_controller_config(default_controller="JOINT_POSITION"),#load_controller_config(default_controller="OSC_POSE"),
+        controller_configs=load_controller_config(default_controller="OSC_POSE"),
+        #controller_configs=load_controller_config(default_controller="JOINT_POSITION"),#load_controller_config(default_controller="OSC_POSE"),
         gripper_types="default",
         initialization_noise="default",
         use_latch=False,
@@ -379,7 +379,8 @@ class MyDoor(SingleArmEnv):
             def hinge_qpos(obs_cache):
                 return np.array([self.sim.data.qpos[self.hinge_qpos_addr]])
 
-            sensors = [door_pos, handle_pos, door_to_eef_pos, handle_to_eef_pos, hinge_qpos]
+            #sensors = [door_pos, handle_pos, door_to_eef_pos, handle_to_eef_pos, hinge_qpos]
+            sensors = [hinge_qpos]
             names = [s.__name__ for s in sensors]
 
             # Also append handle qpos if we're using a locked door version with rotatable handle
