@@ -10,8 +10,9 @@ if __name__ == '__main__':
     model = SAC.load(env_id, env=vec_env)
 
     obs = vec_env.reset()
-    for t in range(1000):
+    for t in range(500):
         action, _states = model.predict(obs)
         #print(action)
         obs, rewards, dones, info = vec_env.step(action)
+        print(t, obs)
         vec_env.envs[0].render()
