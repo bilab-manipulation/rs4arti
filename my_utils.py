@@ -16,7 +16,7 @@ def make_env(env_id: str, rank: int, render: bool, seed: int = 0):
         env = GymWrapper(
             suite.make(
                 "MyDoor",
-                robots="Sawyer", # robosuite benchmark 기준 Sawyer 선택, joint velocity 씀  # use Sawyer robot
+                robots="Panda", # robosuite benchmark 기준 Sawyer 선택, joint velocity 씀  # use Sawyer robot
                 use_camera_obs=False,  # do not use pixel observations
                 has_offscreen_renderer=False,  # not needed since not using pixel obs
                 has_renderer=render,  # make sure we can render to the screen

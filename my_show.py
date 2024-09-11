@@ -1,10 +1,10 @@
 from stable_baselines3 import SAC
-from stable_baselines3.common.vec_env import DummyVecEnv
+from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv
 
 from my_utils import make_env
 
 if __name__ == '__main__':
-    env_id = 'door_sac'
+    env_id = 'door'
     
     vec_env = DummyVecEnv([make_env(env_id, 0, True)])
     model = SAC.load(env_id, env=vec_env)

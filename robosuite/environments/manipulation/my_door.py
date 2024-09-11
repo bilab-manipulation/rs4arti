@@ -8,7 +8,7 @@ from robosuite.models.objects import DoorObject
 from robosuite.models.tasks import ManipulationTask
 from robosuite.utils.observables import Observable, sensor
 from robosuite.utils.placement_samplers import UniformRandomSampler
-
+from robosuite.controllers import load_controller_config
 
 class MyDoor(SingleArmEnv):
     """
@@ -131,16 +131,16 @@ class MyDoor(SingleArmEnv):
 
     def __init__(
         self,
-        robots,
+        robots='Panda',
         env_configuration="default",
-        controller_configs=None,
+        controller_configs=load_controller_config(default_controller="OSC_POSE"),
         gripper_types="default",
         initialization_noise="default",
-        use_latch=True,
+        use_latch=False,
         use_camera_obs=True,
         use_object_obs=True,
         reward_scale=1.0,
-        reward_shaping=False,
+        reward_shaping=True,
         placement_initializer=None,
         has_renderer=False,
         has_offscreen_renderer=True,
@@ -247,8 +247,10 @@ class MyDoor(SingleArmEnv):
             
             # modified by virtualkss (240907)
             # Add hinge angle component
-            #open_reward = 0.3 - self.sim.data.qpos[self.hinge_qpos_addr]
-            #reward += open_reward
+            opening_reward = self.sim.data.qpos[self.hinge_qpos_addr]
+            if opening_reward > 0.3:
+                opening_reward = 0.3
+            reward += opening_reward
 
         # Scale reward if requested
         if self.reward_scale is not None:

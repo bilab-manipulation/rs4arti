@@ -11,7 +11,7 @@ from my_utils import make_env
 
 if __name__ == '__main__':
     env_id = 'door'
-    n_cpu = 70 # dale3 기준 총 72개
+    n_cpu = 20 # dale3 기준 총 72개
     sac_policy = 'MlpPolicy' # 입력이 구조 없는 vector라서 cnn보다 mlp가 맞음
     tot_timesteps = 1000000
     
@@ -24,16 +24,28 @@ if __name__ == '__main__':
 
     model = SAC(sac_policy, 
                 vec_env, 
-                batch_size = 128,
-                learning_rate = 0.00075, # stable-baseline에서는 policy랑 qfunc에 동일한 learning rate 써야 해서 중간값 씀
-                buffer_size = 1000000,
+                learning_rate = 0.0003,
+                buffer_size = tot_timesteps,
                 learning_starts = 3300,
-                target_update_interval = 5,
-
+                batch_size = 128,
+                tau = 0.005,
+                gamma = 0.99,
                 train_freq=1, 
-                gradient_steps=-1, 
+                gradient_steps=1, 
+                action_noise = None,
+                replay_buffer_class = None,
+                #replay_buffer_kwargs
+                #optimize_memory_usage
+                ent_coef= 'auto',
+                target_update_interval = 1,
+                target_entropy = 'auto',
+                use_sde = False,
+                sde_sample_freq = -1,
+                use_sde_at_warmup = False,
+                stats_window_size = 100,
+                seed = 0,
+                #tensorboard_log = log_dir,
                 verbose=1, 
-                #tensorboard_log = log_dir
                 )
     
     #eval_env = SubprocVecEnv([make_env(env_id, 100, False)])
