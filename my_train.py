@@ -11,9 +11,9 @@ from my_utils import make_env
 
 if __name__ == '__main__':
     env_id = 'door'
-    n_cpu = 70#70 # dale3 기준 총 72개
+    n_cpu = 1#70 # dale3 기준 총 72개
     sac_policy = 'MlpPolicy' # 입력이 구조 없는 vector라서 cnn보다 mlp가 맞음
-    tot_timesteps = 1000000
+    tot_timesteps = 1000#00
     
     from stable_baselines3.common.logger import configure
     log_dir = f'./{env_id}_tensorboard/'

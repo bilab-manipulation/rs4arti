@@ -15,6 +15,7 @@ from robosuite.environments.manipulation.two_arm_transport import TwoArmTranspor
 
 # modified by virtualkss (240907)
 from robosuite.environments.manipulation.my_door import MyDoor
+from robosuite.environments.manipulation.two_arm_lift_tmr import TwoArmLiftTMR
 
 from robosuite.environments import ALL_ENVIRONMENTS
 from robosuite.controllers import ALL_CONTROLLERS, load_controller_config
