@@ -11,14 +11,16 @@ git clone https://github.com/bilab-manipulation/rs4arti.git
 
 # installation
 ## https://robosuite.ai/docs/installation.html
+sudo apt install gcc
+sudo apt install g++
 cd rs4arti
-pip install mujoco
 pip install -r requirements.txt
 pip install -r requirements-extra.txt
 ## https://stable-baselines3.readthedocs.io/en/master/guide/install.html
 pip install stable-baselines3[extra]
 ## https://pytorch.org/get-started/previous-versions/
-conda install pytorch==2.4.0 torchvision==0.19.0 torchaudio==2.4.0 pytorch-cuda=12.4 -c pytorch -c nvidia
+##conda install pytorch==2.4.0 torchvision==0.19.0 torchaudio==2.4.0 pytorch-cuda=12.4 -c pytorch -c nvidia
+pip install torch==2.4.0 torchvision==0.19.0 torchaudio==2.4.0 --index-url https://download.pytorch.org/whl/cu124
 cd ..
 ```
 
