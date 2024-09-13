@@ -45,15 +45,22 @@ class Depth2PC:
                 rgb = cv2.resize(rgb, (depth.shape[1], depth.shape[0]))
             assert rgb.shape[:-1] == depth.shape, "IMAGE SHAPE OF RGB and DEPTH SHOULD BE SAME"
             
+
             # Handle NaN and Inf values in depth
             depth = np.where(np.isnan(depth), 0, depth)  # Replace NaNs with 0
             depth = np.where(np.isinf(depth), 0, depth)  # Replace Infs with 0
             depth = geometry.Image(depth.astype(np.uint16))
             rgb = geometry.Image(rgb.astype(np.uint8))    
+            print('in get_pc 1')
             self.camera_info.set_intrinsics(H, W, self.camera_intrinsic[0], self.camera_intrinsic[1],
                                             self.camera_intrinsic[2], self.camera_intrinsic[3])
+            print('in get_pc 2')
             rgbd_image = geometry.RGBDImage.create_from_color_and_depth(rgb, depth, convert_rgb_to_intensity=False)
-            pc = geometry.PointCloud.create_from_rgbd_image(rgbd_image, intrinsic=self.camera_info, extrinsic=camera_extrinsic, project_valid_depth_only=False)
+            print('in get_pc 3')
+            #pc = geometry.PointCloud.create_from_rgbd_image(rgbd_image, intrinsic=self.camera_info, extrinsic=camera_extrinsic, project_valid_depth_only=False)
+            pc = geometry.PointCloud.create_from_rgbd_image(rgbd_image, o3d.camera.PinholeCameraIntrinsic(
+                o3d.camera.PinholeCameraIntrinsicParameters.PrimeSenseDefault))
+            print('in get_pc 4')
             return pc
         
         else:
@@ -86,8 +93,11 @@ if __name__ == '__main__':
     rgb = cv2.cvtColor(cv2.imread('pointcloud_utils/rgb_example.png'), cv2.COLOR_BGR2RGB)
     depth = cv2.imread('pointcloud_utils/depth_example.png', cv2.IMREAD_ANYDEPTH)
     
+    print('here 1')
     
     pc = depth2pc.get_pc(rgb, depth)
+    print('here 2')
     pc = pc.remove_non_finite_points()
-    
+    print('here 3')
     depth2pc.visualize_points(pc)
+    print('here 4')

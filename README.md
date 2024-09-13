@@ -4,6 +4,9 @@
 - Python 3.9
 - torch 2.4.0, CUDA 12.4
 ```bibtex
+# install nvidia-drivers by autoinstall
+## https://rain-bow.tistory.com/entry/CUDA-ERROR-nvidia-smi-has-failed-because-it-couldnt-communicate-with-the-nvidia-driver
+
 # setting virtual environment
 conda create -n rs4arti python=3.9
 conda activate rs4arti
