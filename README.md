@@ -7,12 +7,13 @@
 # setting virtual environment
 conda create -n rs4arti python=3.9
 conda activate rs4arti
-git clone https://github.com/bilab-manipulation/rs4arti.git
+pip install -r requirements_modified.txt
 
 # installation
 ## https://robosuite.ai/docs/installation.html
 sudo apt install gcc
 sudo apt install g++
+git clone https://github.com/bilab-manipulation/rs4arti.git
 cd rs4arti
 pip install -r requirements.txt
 pip install -r requirements-extra.txt
@@ -21,6 +22,7 @@ pip install stable-baselines3[extra]
 ## https://pytorch.org/get-started/previous-versions/
 ##conda install pytorch==2.4.0 torchvision==0.19.0 torchaudio==2.4.0 pytorch-cuda=12.4 -c pytorch -c nvidia
 pip install torch==2.4.0 torchvision==0.19.0 torchaudio==2.4.0 --index-url https://download.pytorch.org/whl/cu124
+pip install pyopengl==3.1.4
 cd ..
 ```
 
