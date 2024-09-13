@@ -39,7 +39,6 @@ cd ..
 - [02/17/2021] **v1.2**: Added observable sensor models :eyes: and dynamics randomization :game_die: [[release notes]](https://github.com/ARISE-Initiative/robosuite/releases/tag/v1.2)
 
 - [12/17/2020] **v1.1**: Refactored infrastructure and standardized model classes for much easier environment prototyping :wrench: [[release notes]](https://github.com/ARISE-Initiative/robosuite/releases/tag/v1.1)
-
 -------
 
 **robosuite** is a simulation framework powered by the [MuJoCo](http://mujoco.org/) physics engine for robot learning. It also offers a suite of benchmark environments for reproducible research. The current release (v1.4) features long-term support with the official MuJoCo binding from DeepMind. This project is part of the broader [Advancing Robot Intelligence through Simulated Environments (ARISE) Initiative](https://github.com/ARISE-Initiative), with the aim of lowering the barriers of entry for cutting-edge research at the intersection of AI and Robotics.
@@ -60,6 +59,15 @@ This release of **robosuite** contains seven robot models, eight gripper models,
 * **multi-modal sensors**: heterogeneous types of sensory signals, including low-level physical states, RGB cameras, depth maps, and proprioception;
 * **human demonstrations**: utilities for collecting human demonstrations, replaying demonstration datasets, and leveraging demonstration data for learning. Check out our sister project [robomimic](https://arise-initiative.github.io/robomimic-web/);
 * **photorealistic rendering**: integration with advanced graphics tools that provide real-time photorealistic renderings of simulated scenes.
+
+## Obtain point clouds from RGB-D
+Check a class `Depth2PC` in `pointcloud_utils/pc_utls.py`. You can find out demo with images from [OCID](https://www.acin.tuwien.ac.at/en/vision-for-robotics/software-tools/object-clutter-indoor-dataset/) by simply running:
+```
+python pointcloud_utils/pc_utls.py
+```
+
+
+
 
 ## Citation
 Please cite [**robosuite**](https://robosuite.ai) if you use this framework in your publications:
