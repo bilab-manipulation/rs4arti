@@ -6,6 +6,8 @@
 ```bibtex
 # install nvidia-drivers by autoinstall
 ## https://rain-bow.tistory.com/entry/CUDA-ERROR-nvidia-smi-has-failed-because-it-couldnt-communicate-with-the-nvidia-driver
+# install CUDA Toolkit 12.4
+## https://developer.nvidia.com/cuda-12-4-0-download-archive
 
 # setting virtual environment
 conda create -n rs4arti python=3.9
@@ -27,6 +29,11 @@ pip install stable-baselines3[extra]
 pip install torch==2.4.0 torchvision==0.19.0 torchaudio==2.4.0 --index-url https://download.pytorch.org/whl/cu124
 pip install pyopengl==3.1.4
 cd ..
+
+# fix installation
+pip uninstall opencv-python
+## pip uninstall opencv-python-headless
+conda install -c conda-forge opencv=4.7.0
 ```
 
 # robosuite
