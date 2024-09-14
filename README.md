@@ -34,6 +34,11 @@ cd ..
 pip uninstall opencv-python
 ## pip uninstall opencv-python-headless
 conda install -c conda-forge opencv=4.7.0
+
+# for nvisii renderer
+pip install nvisii
+## https://stackoverflow.com/questions/72110384/libgl-error-mesa-loader-failed-to-open-iris
+conda install -c conda-forge libstdcxx-ng
 ```
 
 # robosuite
