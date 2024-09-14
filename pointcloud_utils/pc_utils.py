@@ -6,7 +6,7 @@ Codes mainly from a robocup2023 repository owned by team TIDYBOY
 import numpy as np
 from open3d import geometry, visualization, camera
 import open3d as o3d
-import pyrender
+# import pyrender
 import cv2
 
 class Depth2PC:
@@ -49,23 +49,52 @@ class Depth2PC:
             # Handle NaN and Inf values in depth
             depth = np.where(np.isnan(depth), 0, depth)  # Replace NaNs with 0
             depth = np.where(np.isinf(depth), 0, depth)  # Replace Infs with 0
+            print("rgb", rgb)
+
             depth = geometry.Image(depth.astype(np.uint16))
-            rgb = geometry.Image(rgb.astype(np.uint8))    
-            print('in get_pc 1')
+            rgb = geometry.Image(rgb.astype(np.uint8))
+            print("camera intrinsic", self.camera_intrinsic)    
             self.camera_info.set_intrinsics(H, W, self.camera_intrinsic[0], self.camera_intrinsic[1],
                                             self.camera_intrinsic[2], self.camera_intrinsic[3])
-            print('in get_pc 2')
             rgbd_image = geometry.RGBDImage.create_from_color_and_depth(rgb, depth, convert_rgb_to_intensity=False)
-            print('in get_pc 3')
-            #pc = geometry.PointCloud.create_from_rgbd_image(rgbd_image, intrinsic=self.camera_info, extrinsic=camera_extrinsic, project_valid_depth_only=False)
-            pc = geometry.PointCloud.create_from_rgbd_image(rgbd_image, o3d.camera.PinholeCameraIntrinsic(
-                o3d.camera.PinholeCameraIntrinsicParameters.PrimeSenseDefault))
-            print('in get_pc 4')
+            pc = geometry.PointCloud.create_from_rgbd_image(rgbd_image, intrinsic=self.camera_info, extrinsic=camera_extrinsic, project_valid_depth_only=False)
+            # pc = geometry.PointCloud.create_from_rgbd_image(rgbd_image, o3d.camera.PinholeCameraIntrinsic(
+            #     o3d.camera.PinholeCameraIntrinsicParameters.PrimeSenseDefault))
             return pc
         
         else:
             return None
         
+    def get_labeled_pc(self, depth, label, camera_extrinsic=np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])):
+        '''
+        x, y, z + color + label을 다 커버하는 모듈은 제공안함... 그냥 따로따로 해서 합치는게 방법임
+        현재는 color부분을 대체해서 label+ xyz 포인트 클라우드를 만들어준다.
+        color = label_idx * 3 으로 다 인코딩 해줌
+        depth: np.ndarray shape (H, W)
+        label: np.ndarray shape (H, W) or (H, W, 1)
+        output:
+            pointcloud: open3d.geometry.PointCloud
+        '''
+        if self.camera_intrinsic is not None and depth is not None and label is not None:
+            if len(depth.shape) == 3:
+                assert depth.shape[-1] == 1, depth.shape
+                depth = np.squeeze(depth, axis=-1)
+            if len(label.shape) == 2:
+                label = np.expand_dims(label, axis=-1)
+            assert label.shape[-1] == 1 and len(label.shape) == 3, label.shape 
+            assert label.max() <= 255, "LABEL OVER 8bit is not supported."
+            label = np.tile(label, (1, 1, 3)).astype(np.uint8)
+        
+            pc = self.get_pc(label, depth, camera_extrinsic)
+            print("PC", pc)
+            return pc
+
+        else:
+            return None
+        
+        
+        
+    
     @staticmethod
     def visualize_points(pc):
         '''
@@ -79,6 +108,30 @@ class Depth2PC:
         viewer = pyrender.Viewer(scene, use_raymond_lighting=True, point_size=2)
         # o3d.visualization.draw_geometries([pc])
     
+    @staticmethod
+    def visualize_labeled_points(pc):
+        '''
+        pc: labeled points by get_labeled_pc
+        '''
+        np.random.seed(0)
+        points = np.asarray(pc.points)
+        colors = np.asarray(pc.colors) 
+        colors_decode = colors * 255
+        uc = np.unique(colors_decode)
+        for u in uc:
+            colors[colors_decode[:,0] == u] = np.random.rand(3)
+        
+        pcd = o3d.geometry.PointCloud()
+        # NumPy 배열을 PointCloud에 추가
+        pcd.points = o3d.utility.Vector3dVector(points)  # xyz 좌표 추가
+        pcd.colors = o3d.utility.Vector3dVector(colors)  # rgb 색상 추가
+
+        # 시각화
+        o3d.visualization.draw_plotly([pcd])
+
+        # cloud = pyrender.Mesh.from_points(points, colors=colors)
+        # scene = pyrender.Scene()
+
 
     
 
