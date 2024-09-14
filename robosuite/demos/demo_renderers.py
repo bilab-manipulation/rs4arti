@@ -94,13 +94,8 @@ if __name__ == "__main__":
             action = np.random.uniform(low, high)
             obs, reward, done, _ = env.step(action)
 
-            # virtualkss start
-            print(obs)
-            #if i % 100 == 0:
-                #env.render()
-            env.render()
-            # virtualkss end
-            
+            if i % 100 == 0:
+                env.render()
 
     else:
 
