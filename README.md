@@ -4,6 +4,8 @@
 - Python 3.9
 - torch 2.4.0, CUDA 12.4
 ```bibtex
+# install miniconda
+## ~~~
 # install nvidia-drivers by autoinstall
 ## https://rain-bow.tistory.com/entry/CUDA-ERROR-nvidia-smi-has-failed-because-it-couldnt-communicate-with-the-nvidia-driver
 # install CUDA Toolkit 12.4
@@ -20,6 +22,7 @@ sudo apt install gcc
 sudo apt install g++
 git clone https://github.com/bilab-manipulation/rs4arti.git
 cd rs4arti
+# do not pip install robosuite because we should customize robosuite
 pip install -r requirements.txt
 pip install -r requirements-extra.txt
 ## https://stable-baselines3.readthedocs.io/en/master/guide/install.html
@@ -31,6 +34,8 @@ pip install pyopengl==3.1.4
 cd ..
 
 # fix installation
+## cannot use pointcloud_utils because pyrender & pyopengl version issue
+pip uninstall pyrender
 pip uninstall opencv-python
 ## pip uninstall opencv-python-headless
 conda install -c conda-forge opencv=4.7.0
@@ -39,6 +44,10 @@ conda install -c conda-forge opencv=4.7.0
 pip install nvisii
 ## https://stackoverflow.com/questions/72110384/libgl-error-mesa-loader-failed-to-open-iris
 conda install -c conda-forge libstdcxx-ng
+
+# for rgb seg
+## https://github.com/imageio/imageio/issues/925
+pip install imageio-ffmpeg
 ```
 
 # robosuite

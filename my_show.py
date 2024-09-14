@@ -3,6 +3,7 @@ from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv
 import open3d as o3d
 import matplotlib.pyplot as plt
 
+from robosuite.utils.camera_utils import get_camera_intrinsic_matrix
 from my_utils import make_env
 
 if __name__ == '__main__':
@@ -17,6 +18,12 @@ if __name__ == '__main__':
 
     print('reset env')
     obs = vec_env.reset()
+    
+    print('get cam intrinsic')
+    camera_intrinsic_matrix = get_camera_intrinsic_matrix(vec_env.envs[0].sim, 'agentview', 480, 640)
+    o3d_pcam_intr = o3d.camera.PinholeCameraIntrinsic(256, 256, camera_intrinsic_matrix)
+    print(camera_intrinsic_matrix)
+    print(o3d_pcam_intr)
 
     for t in range(horizon):
         print('predict by model')
@@ -43,11 +50,12 @@ if __name__ == '__main__':
         plt.show()
         plt.close()
 
+        print('here')
+        cam_intr = o3d.camera.PinholeCameraIntrinsic(o3d.camera.PinholeCameraIntrinsicParameters.PrimeSenseDefault)
+        print(cam_intr)
+
         print('making point cloud from rgbd image')
-        pcd = o3d.geometry.PointCloud.create_from_rgbd_image(
-            rgbd_image,
-            o3d.camera.PinholeCameraIntrinsic(
-                o3d.camera.PinholeCameraIntrinsicParameters.PrimeSenseDefault))
+        pcd = o3d.geometry.PointCloud.create_from_rgbd_image(rgbd_image, o3d.camera.PinholeCameraIntrinsic(o3d.camera.PinholeCameraIntrinsicParameters.PrimeSenseDefault))
         # Flip it, otherwise the pointcloud will be upside down
         pcd.transform([[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]])
         print('plot pc by using plotly')
@@ -55,3 +63,5 @@ if __name__ == '__main__':
         
         print('rendering env')
         vec_env.envs[0].render()
+
+        import pdb;pdb.set_trace()
