@@ -8,7 +8,8 @@ from open3d import geometry, visualization, camera
 import open3d as o3d
 # import pyrender
 import cv2
-
+from copy import deepcopy as deepcopy
+import matplotlib.pyplot as plt
 class Depth2PC:
     def __init__(self, camera_intrinsic):
         '''
@@ -45,13 +46,13 @@ class Depth2PC:
                 rgb = cv2.resize(rgb, (depth.shape[1], depth.shape[0]))
             assert rgb.shape[:-1] == depth.shape, "IMAGE SHAPE OF RGB and DEPTH SHOULD BE SAME"
             
-
+            print("depth", depth)
             # Handle NaN and Inf values in depth
             depth = np.where(np.isnan(depth), 0, depth)  # Replace NaNs with 0
             depth = np.where(np.isinf(depth), 0, depth)  # Replace Infs with 0
             print("rgb", rgb)
 
-            depth = geometry.Image(depth.astype(np.uint16))
+            depth = geometry.Image(depth)
             rgb = geometry.Image(rgb.astype(np.uint8))
             print("camera intrinsic", self.camera_intrinsic)    
             self.camera_info.set_intrinsics(H, W, self.camera_intrinsic[0], self.camera_intrinsic[1],
@@ -86,7 +87,6 @@ class Depth2PC:
             label = np.tile(label, (1, 1, 3)).astype(np.uint8)
         
             pc = self.get_pc(label, depth, camera_extrinsic)
-            print("PC", pc)
             return pc
 
         else:
@@ -116,21 +116,43 @@ class Depth2PC:
         np.random.seed(0)
         points = np.asarray(pc.points)
         colors = np.asarray(pc.colors) 
-        colors_decode = colors * 255
+        print("colors", np.unique(colors))
+        colors_decode = deepcopy(colors) * 255
         uc = np.unique(colors_decode)
         for u in uc:
             colors[colors_decode[:,0] == u] = np.random.rand(3)
-        
+        print("colors", colors)
         pcd = o3d.geometry.PointCloud()
         # NumPy 배열을 PointCloud에 추가
         pcd.points = o3d.utility.Vector3dVector(points)  # xyz 좌표 추가
         pcd.colors = o3d.utility.Vector3dVector(colors)  # rgb 색상 추가
-
-        # 시각화
+        print("points", points.shape, "colors", colors.shape)
+        print(np.unique(colors))
         o3d.visualization.draw_plotly([pcd])
 
         # cloud = pyrender.Mesh.from_points(points, colors=colors)
         # scene = pyrender.Scene()
+        # 점들을 2D 평면으로 프로젝션
+        # 단순히 x, y 좌표를 사용하여 2D 이미지에 그립니다
+        # x = points[:, 0]
+        # y = points[:, 1]
+        # z = points[:, 2]
+        # print("colors", colors.max(), colors.min())
+
+        # # 정규화 색상
+        # colors = (colors - colors.min(axis=0)) / (colors.max(axis=0) - colors.min(axis=0)+1e-3)
+        # r = colors[:, 0]
+        # g = colors[:, 1]
+        # b = colors[:, 2]
+
+        # plt.figure(figsize=(10, 10))
+        # plt.scatter(x, y, c=np.array([r, g, b]).T, s=1, marker='o')  # 점을 작은 원으로 그림
+        # plt.xlabel("X")
+        # plt.ylabel("Y")
+        # plt.title("PointCloud Projection")
+        # plt.gca().set_aspect('equal', adjustable='box')
+        # plt.savefig("test.png")
+        # plt.show()
 
 
     
@@ -145,7 +167,8 @@ if __name__ == '__main__':
     depth2pc = Depth2PC(K)
     rgb = cv2.cvtColor(cv2.imread('pointcloud_utils/rgb_example.png'), cv2.COLOR_BGR2RGB)
     depth = cv2.imread('pointcloud_utils/depth_example.png', cv2.IMREAD_ANYDEPTH)
-    
+    print("depth", depth, type(depth), depth.dtype)
+    exit(0)
     print('here 1')
     
     pc = depth2pc.get_pc(rgb, depth)

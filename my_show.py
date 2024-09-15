@@ -36,6 +36,7 @@ if __name__ == '__main__':
         print('making rgbd image')
         color_raw = o3d.geometry.Image(vec_env.envs[0].env.env._observables['agentview_image'].obs)
         depth_raw = o3d.geometry.Image(vec_env.envs[0].env.env._observables['agentview_depth'].obs)
+        print(vec_env.envs[0].env.env._observables['agentview_depth'].obs.dtype)
         rgbd_image = o3d.geometry.RGBDImage.create_from_color_and_depth(color_raw, depth_raw)
         print(rgbd_image)
         
