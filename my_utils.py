@@ -23,9 +23,12 @@ def make_env(env_id: str, rank: int, render: bool, seed: int = 0):
                 reward_shaping=True,  # use dense rewards
                 control_freq=20,  # control should happen fast enough so that simulation looks smooth,
                 use_latch=False, # latch까지 있는 것은 너무 어려움
-            )
+            ),
+            ['hinge_qpos']
         )
+
         env.reset(seed=seed + rank)
+
         from stable_baselines3.common.monitor import Monitor
         return Monitor(env)
         #return env

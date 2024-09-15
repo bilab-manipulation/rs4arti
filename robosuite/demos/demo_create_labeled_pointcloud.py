@@ -118,7 +118,7 @@ if __name__ == "__main__":
     depth2pc.visualize_labeled_points(labeled_pc)
 
     env.render()
-    input('go')
+    import pdb; pdb.set_trace()
     
     # seg_rgb_img = segmentation_to_rgb(obs[f"{camera}_segmentation_{segmentation_level}"].squeeze(-1)[::-1])
     # image = Image.fromarray(seg_rgb_img)

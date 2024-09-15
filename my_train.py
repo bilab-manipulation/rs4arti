@@ -22,6 +22,8 @@ if __name__ == '__main__':
 
     vec_env = SubprocVecEnv([make_env(env_id, i, False) for i in range(n_cpu)])
 
+    #vec_env.env_method('modify_observable('observable_name', 'is_enabled', False)')
+
     model = SAC(sac_policy, 
                 vec_env, 
                 learning_rate = 0.0003,

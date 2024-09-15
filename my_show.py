@@ -13,17 +13,41 @@ if __name__ == '__main__':
     print('making env')
     vec_env = DummyVecEnv([make_env(env_id, 0, True)])
 
+    import pdb; pdb.set_trace()
+    
+    for key, val in vec_env.envs[0].env.env._observables.items():
+        if key == 'robot0_eef_pos':
+            print(val.obs)
+            print(val._current_observed_value)
+            val.set_enabled(False)
+            val.set_active(False)
+        print(key, val)
+
+
     print('load model')
     model = SAC.load(env_id, env=vec_env)
 
     print('reset env')
     obs = vec_env.reset()
+
+    for key, val in vec_env.envs[0].env.env._observables.items():
+        print(key, val)
     
     print('get cam intrinsic')
     camera_intrinsic_matrix = get_camera_intrinsic_matrix(vec_env.envs[0].sim, 'agentview', 480, 640)
     o3d_pcam_intr = o3d.camera.PinholeCameraIntrinsic(256, 256, camera_intrinsic_matrix)
     print(camera_intrinsic_matrix)
     print(o3d_pcam_intr)
+
+    for key, val in vec_env.envs[0].env.env._observables.items():
+        if key == 'robot0_eef_pos':
+            val.set_enabled(False)
+            val.set_active(False)
+
+    for key, val in vec_env.envs[0].env.env._observables.items():
+        print(key, val)
+
+    import pdb; pdb.set_trace()
 
     for t in range(horizon):
         print('predict by model')

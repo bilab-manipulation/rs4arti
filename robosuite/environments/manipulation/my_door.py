@@ -400,6 +400,29 @@ class MyDoor(SingleArmEnv):
                     sensor=s,
                     sampling_rate=self.control_freq,
                 )
+        
+        observable_names = [
+            'robot0_joint_pos',
+            'robot0_joint_pos_cos',
+            'robot0_joint_pos_sin',
+            'robot0_joint_vel',
+            'robot0_eef_pos',
+            'robot0_eef_quat',
+            'robot0_eef_vel_lin',
+            'robot0_eef_vel_ang',
+            'robot0_gripper_qpos',
+            'robot0_gripper_qvel',
+            'agentview_image',
+            'agentview_depth',
+            'door_pos',
+            'handle_pos',
+            'door_to_eef_pos',
+            'handle_to_eef_pos',
+            #'hinge_qpos',
+        ]
+        for observable_name in observable_names:
+            del observables[observable_name]
+
         import pprint
         pprint.pprint(observables)
 
