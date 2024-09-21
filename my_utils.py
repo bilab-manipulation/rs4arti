@@ -22,9 +22,8 @@ def make_env(env_id: str, rank: int, render: bool, seed: int = 0):
                 has_renderer=render,  # make sure we can render to the screen
                 reward_shaping=True,  # use dense rewards
                 control_freq=20,  # control should happen fast enough so that simulation looks smooth,
-                use_latch=False, # latch까지 있는 것은 너무 어려움
-            ),
-            ['hinge_qpos']
+                use_latch=False, # latch까지 있는 것은 너무 어려움,
+            )
         )
 
         env.reset(seed=seed + rank)

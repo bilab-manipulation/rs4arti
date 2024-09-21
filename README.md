@@ -14,7 +14,7 @@
 # setting virtual environment
 conda create -n rs4arti python=3.9
 conda activate rs4arti
-pip install -r requirements_modified.txt
+pip install -r requirements-legacy.txt
 
 # installation
 ## https://robosuite.ai/docs/installation.html

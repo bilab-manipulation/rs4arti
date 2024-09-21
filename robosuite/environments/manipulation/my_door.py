@@ -151,8 +151,8 @@ class MyDoor(SingleArmEnv):
         render_gpu_device_id=-1,
         control_freq=20,
         horizon=500,
-        ignore_done=True,#False,
-        hard_reset=False,#True,
+        ignore_done=False, #True,#False,
+        hard_reset=True, #False,#True,
         camera_names="agentview",
         camera_heights=256,
         camera_widths=256,
@@ -335,6 +335,12 @@ class MyDoor(SingleArmEnv):
         if self.use_latch:
             self.handle_qpos_addr = self.sim.model.get_joint_qpos_addr(self.door.joints[1])
 
+    # virtualkss start
+    def _get_observables(self):
+        print('in here')
+        return self._observables
+    # virtualkss end
+
     def _setup_observables(self):
         """
         Sets up observables to be used for this environment. Creates object-based observables if enabled
@@ -400,31 +406,6 @@ class MyDoor(SingleArmEnv):
                     sensor=s,
                     sampling_rate=self.control_freq,
                 )
-        
-        observable_names = [
-            'robot0_joint_pos',
-            'robot0_joint_pos_cos',
-            'robot0_joint_pos_sin',
-            'robot0_joint_vel',
-            'robot0_eef_pos',
-            'robot0_eef_quat',
-            'robot0_eef_vel_lin',
-            'robot0_eef_vel_ang',
-            'robot0_gripper_qpos',
-            'robot0_gripper_qvel',
-            'agentview_image',
-            'agentview_depth',
-            'door_pos',
-            'handle_pos',
-            'door_to_eef_pos',
-            'handle_to_eef_pos',
-            #'hinge_qpos',
-        ]
-        for observable_name in observable_names:
-            del observables[observable_name]
-
-        import pprint
-        pprint.pprint(observables)
 
         return observables
 

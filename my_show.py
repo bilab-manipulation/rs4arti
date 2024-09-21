@@ -15,13 +15,13 @@ if __name__ == '__main__':
 
     import pdb; pdb.set_trace()
     
-    for key, val in vec_env.envs[0].env.env._observables.items():
-        if key == 'robot0_eef_pos':
-            print(val.obs)
-            print(val._current_observed_value)
-            val.set_enabled(False)
-            val.set_active(False)
-        print(key, val)
+    # for key, val in vec_env.envs[0].env.env._observables.items():
+    #     if key == 'robot0_eef_pos':
+    #         print(val.obs)
+    #         print(val._current_observed_value)
+    #         val.set_enabled(False)
+    #         val.set_active(False)
+    #     print(key, val)
 
 
     print('load model')

@@ -56,6 +56,10 @@ class GymWrapper(Wrapper, gym.Env):
 
         # set up observation and action spaces
         obs = self.env.reset()
+        # virtualkss start
+        print('obs', type(obs), obs)
+        print('self.keys', type(self.keys), self.keys)
+        # virtualkss end
         self.modality_dims = {key: obs[key].shape for key in self.keys}
         flat_ob = self._flatten_obs(obs)
         self.obs_dim = flat_ob.size
