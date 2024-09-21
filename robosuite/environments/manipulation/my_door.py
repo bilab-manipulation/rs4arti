@@ -336,9 +336,11 @@ class MyDoor(SingleArmEnv):
             self.handle_qpos_addr = self.sim.model.get_joint_qpos_addr(self.door.joints[1])
 
     # virtualkss start
-    def _get_observables(self):
-        print('in here')
-        return self._observables
+    def get_observables(self):
+        #print(self._observables['hinge_qpos'])
+        #print(self._observables['hinge_qpos'].is_enabled())
+        #print(self._observables['hinge_qpos'].is_active())
+        print(len(self._observables))
     # virtualkss end
 
     def _setup_observables(self):

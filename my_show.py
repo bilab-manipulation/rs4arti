@@ -13,7 +13,7 @@ if __name__ == '__main__':
     print('making env')
     vec_env = DummyVecEnv([make_env(env_id, 0, True)])
 
-    import pdb; pdb.set_trace()
+    #import pdb; pdb.set_trace()
     
     # for key, val in vec_env.envs[0].env.env._observables.items():
     #     if key == 'robot0_eef_pos':
@@ -29,6 +29,7 @@ if __name__ == '__main__':
 
     print('reset env')
     obs = vec_env.reset()
+    print(obs)
 
     for key, val in vec_env.envs[0].env.env._observables.items():
         print(key, val)

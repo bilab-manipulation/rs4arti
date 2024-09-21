@@ -1,5 +1,5 @@
 import robosuite as suite
-from robosuite.wrappers import GymWrapper
+from robosuite.wrappers import MyGymWrapper
 
 from stable_baselines3.common.utils import set_random_seed
 
@@ -13,7 +13,7 @@ def make_env(env_id: str, rank: int, render: bool, seed: int = 0):
     :param rank: index of the subprocess
     """
     def _init():
-        env = GymWrapper(
+        env = MyGymWrapper(
             suite.make(
                 "MyDoor",
                 robots="UR5e", # robosuite benchmark 기준 Sawyer 선택, joint velocity 씀  # use Sawyer robot

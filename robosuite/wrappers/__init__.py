@@ -4,6 +4,11 @@ from robosuite.wrappers.demo_sampler_wrapper import DemoSamplerWrapper
 from robosuite.wrappers.domain_randomization_wrapper import DomainRandomizationWrapper
 from robosuite.wrappers.visualization_wrapper import VisualizationWrapper
 
+# virtualkss start
+from robosuite.wrappers.my_gym_wrapper import MyGymWrapper
+# virtualkss end
+
+
 try:
     from robosuite.wrappers.gym_wrapper import GymWrapper
 except:

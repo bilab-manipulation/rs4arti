@@ -11,10 +11,9 @@ from my_utils import make_env
 
 if __name__ == '__main__':
     env_id = 'door'
-    env_id = 'PickPlaceCan'
-    n_cpu = 2 # dale3: 72, biomen: 24
+    n_cpu = 1 # dale3: 72, biomen: 24
     sac_policy = 'MlpPolicy' # 입력이 구조 없는 vector라서 cnn보다 mlp가 맞음
-    tot_timesteps = 1000000
+    tot_timesteps = 1
     
     from stable_baselines3.common.logger import configure
     log_dir = f'./{env_id}_tensorboard/'
@@ -40,7 +39,7 @@ if __name__ == '__main__':
         # 'handle_pos',
         # 'door_to_eef_pos',
         # 'handle_to_eef_pos',
-        'hinge_qpos',
+        # 'hinge_qpos',
     ]
 
     # print('self', self, dir(self))
@@ -49,14 +48,17 @@ if __name__ == '__main__':
     # print('self._observables', self._observables, dir(self._observables))
     # print('\n')
     # print('self._observables["robot0_joint_pos"]', self._observables['robot0_joint_pos'], dir(self._observables['robot0_joint_pos']))
-        
+    
+    vec_env.env_method('get_observables')
     for useless_observable_name in useless_observable_names:
         #self.modify_observable(useless_observable_name, 'enabled', False)
         #self.modify_observable(useless_observable_name, 'active', False)
         vec_env.env_method('modify_observable', useless_observable_name, 'enabled', False)
         vec_env.env_method('modify_observable', useless_observable_name, 'active', False)
+    vec_env.env_method('get_observables')
     vec_env.env_method('reset')
-    #import pdb;pdb.set_trace()
+    vec_env.env_method('get_observables')
+    import pdb;pdb.set_trace()
 
     model = SAC(sac_policy, 
                 vec_env, 
