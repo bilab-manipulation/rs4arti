@@ -8,7 +8,6 @@ from robosuite.models.objects import DoorObject
 from robosuite.models.tasks import ManipulationTask
 from robosuite.utils.observables import Observable, sensor
 from robosuite.utils.placement_samplers import UniformRandomSampler
-from robosuite.controllers import load_controller_config
 
 class MyDoor(SingleArmEnv):
     """
@@ -131,17 +130,16 @@ class MyDoor(SingleArmEnv):
 
     def __init__(
         self,
-        robots='UR5e',#'Panda',
+        robots,
         env_configuration="default",
-        controller_configs=load_controller_config(default_controller="OSC_POSE"),
-        #controller_configs=load_controller_config(default_controller="JOINT_POSITION"),#load_controller_config(default_controller="OSC_POSE"),
+        controller_configs=None,
         gripper_types="default",
         initialization_noise="default",
-        use_latch=False,
+        use_latch=True,
         use_camera_obs=True,
         use_object_obs=True,
         reward_scale=1.0,
-        reward_shaping=True,
+        reward_shaping=False,
         placement_initializer=None,
         has_renderer=False,
         has_offscreen_renderer=True,
@@ -150,13 +148,13 @@ class MyDoor(SingleArmEnv):
         render_visual_mesh=True,
         render_gpu_device_id=-1,
         control_freq=20,
-        horizon=500,
-        ignore_done=False, #True,#False,
-        hard_reset=True, #False,#True,
+        horizon=1000,
+        ignore_done=False,
+        hard_reset=True,
         camera_names="agentview",
         camera_heights=256,
         camera_widths=256,
-        camera_depths=True,
+        camera_depths=False,
         camera_segmentations=None,  # {None, instance, class, element}
         renderer="mujoco",
         renderer_config=None,
@@ -284,6 +282,21 @@ class MyDoor(SingleArmEnv):
             pos=[0.5986131746834771, -4.392035683362857e-09, 1.5903500240372423],
             quat=[0.6380177736282349, 0.3048497438430786, 0.30484986305236816, 0.6380177736282349],
         )
+        mujoco_arena.set_camera(
+            camera_name="frontview",
+            pos=[1.6, 0, 1.45],
+            quat=[0.56, 0.43, 0.43, 0.56],
+        )
+        mujoco_arena.set_camera(
+            camera_name="birdtview",
+            pos=[-0.2, 0, 3.0],
+            quat=[0.7071, 0, 0, 0.7071],
+        )
+        mujoco_arena.set_camera(
+            camera_name="sideview",
+            pos=[-0.05651774593317116, 1.2761224129427358, 1.4879572214102434],
+            quat=[0.009905065491771751, 0.006877963156909582, 0.5912228352893879, 0.806418094001364],
+        )
 
         # initialize objects of interest
         self.door = DoorObject(
@@ -334,14 +347,6 @@ class MyDoor(SingleArmEnv):
         self.hinge_qpos_addr = self.sim.model.get_joint_qpos_addr(self.door.joints[0])
         if self.use_latch:
             self.handle_qpos_addr = self.sim.model.get_joint_qpos_addr(self.door.joints[1])
-
-    # virtualkss start
-    def get_observables(self):
-        #print(self._observables['hinge_qpos'])
-        #print(self._observables['hinge_qpos'].is_enabled())
-        #print(self._observables['hinge_qpos'].is_active())
-        print(len(self._observables))
-    # virtualkss end
 
     def _setup_observables(self):
         """

@@ -13,24 +13,13 @@ if __name__ == '__main__':
     print('making env')
     vec_env = DummyVecEnv([make_env(env_id, 0, True)])
 
-    #import pdb; pdb.set_trace()
-    
-    # for key, val in vec_env.envs[0].env.env._observables.items():
-    #     if key == 'robot0_eef_pos':
-    #         print(val.obs)
-    #         print(val._current_observed_value)
-    #         val.set_enabled(False)
-    #         val.set_active(False)
-    #     print(key, val)
-
-
     print('load model')
     model = SAC.load(env_id, env=vec_env)
 
     print('reset env')
     obs = vec_env.reset()
-    print(obs)
 
+    print('_observables: ')
     for key, val in vec_env.envs[0].env.env._observables.items():
         print(key, val)
     
@@ -40,15 +29,15 @@ if __name__ == '__main__':
     print(camera_intrinsic_matrix)
     print(o3d_pcam_intr)
 
-    for key, val in vec_env.envs[0].env.env._observables.items():
-        if key == 'robot0_eef_pos':
-            val.set_enabled(False)
-            val.set_active(False)
+    # for key, val in vec_env.envs[0].env.env._observables.items():
+    #     if key == 'robot0_eef_pos':
+    #         val.set_enabled(False)
+    #         val.set_active(False)
 
-    for key, val in vec_env.envs[0].env.env._observables.items():
-        print(key, val)
+    # for key, val in vec_env.envs[0].env.env._observables.items():
+    #     print(key, val)
 
-    import pdb; pdb.set_trace()
+    # import pdb; pdb.set_trace()
 
     for t in range(horizon):
         print('predict by model')
@@ -61,9 +50,9 @@ if __name__ == '__main__':
         print('making rgbd image')
         color_raw = o3d.geometry.Image(vec_env.envs[0].env.env._observables['agentview_image'].obs)
         depth_raw = o3d.geometry.Image(vec_env.envs[0].env.env._observables['agentview_depth'].obs)
-        print(vec_env.envs[0].env.env._observables['agentview_depth'].obs.dtype)
+        #print(vec_env.envs[0].env.env._observables['agentview_depth'].obs.dtype)
         rgbd_image = o3d.geometry.RGBDImage.create_from_color_and_depth(color_raw, depth_raw)
-        print(rgbd_image)
+        #print(rgbd_image)
         
         print('making rgbd image plot')
         plt.subplot(1, 2, 1)
@@ -73,7 +62,7 @@ if __name__ == '__main__':
         plt.title('depth image')
         plt.imshow(rgbd_image.depth)
         print('plot rgbd image')
-        plt.show()
+        #plt.show()
         plt.close()
 
         print('here')
@@ -85,9 +74,9 @@ if __name__ == '__main__':
         # Flip it, otherwise the pointcloud will be upside down
         pcd.transform([[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]])
         print('plot pc by using plotly')
-        o3d.visualization.draw_plotly([pcd])
+        #o3d.visualization.draw_plotly([pcd])
         
         print('rendering env')
         vec_env.envs[0].render()
 
-        import pdb;pdb.set_trace()
+        #import pdb;pdb.set_trace()

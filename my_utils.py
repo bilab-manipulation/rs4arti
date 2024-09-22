@@ -1,7 +1,10 @@
 import robosuite as suite
 from robosuite.wrappers import MyGymWrapper
 
+from robosuite.controllers import load_controller_config
+
 from stable_baselines3.common.utils import set_random_seed
+from stable_baselines3.common.monitor import Monitor
 
 def make_env(env_id: str, rank: int, render: bool, seed: int = 0):
     """
@@ -13,22 +16,78 @@ def make_env(env_id: str, rank: int, render: bool, seed: int = 0):
     :param rank: index of the subprocess
     """
     def _init():
-        env = MyGymWrapper(
-            suite.make(
+
+        rsenv = suite.make(
                 "MyDoor",
-                robots="UR5e", # robosuite benchmark 기준 Sawyer 선택, joint velocity 씀  # use Sawyer robot
-                use_camera_obs=True,  # do not use pixel observations
-                has_offscreen_renderer=True,  # not needed since not using pixel obs
+                robots="UR5e", # use UR5e robot
+                controller_configs=load_controller_config(default_controller="OSC_POSE"), # JOINT_POSITION
+                use_latch=False, # for easy
+                use_camera_obs=True,  # use pixel observations
+                reward_shaping=False,  # use dense rewards
                 has_renderer=render,  # make sure we can render to the screen
-                reward_shaping=True,  # use dense rewards
+                has_offscreen_renderer=True,  # not needed since not using pixel obs
                 control_freq=20,  # control should happen fast enough so that simulation looks smooth,
-                use_latch=False, # latch까지 있는 것은 너무 어려움,
+                horizon=500,
+                camera_depths=True,
+                camera_names='agentview',
             )
+
+        full_observable_list = [
+            'robot0_joint_pos',
+            'robot0_joint_pos_cos',
+            'robot0_joint_pos_sin',
+            'robot0_joint_vel',
+            'robot0_eef_pos',
+            'robot0_eef_quat',
+            'robot0_eef_vel_lin',
+            'robot0_eef_vel_ang',
+            'robot0_gripper_qpos',
+            'robot0_gripper_qvel',
+            'agentview_image',
+            'agentview_depth',
+            'door_pos',
+            'handle_pos',
+            'door_to_eef_pos',
+            'handle_to_eef_pos',
+            'hinge_qpos',
+        ]
+        for observable in full_observable_list:
+            rsenv.modify_observable(observable, 'enabled', True)
+            rsenv.modify_observable(observable, 'active', True)
+        
+        useless_observable_list = [
+            # 'robot0_joint_pos',
+            # 'robot0_joint_pos_cos',
+            # 'robot0_joint_pos_sin',
+            # 'robot0_joint_vel',
+            # 'robot0_eef_pos',
+            # 'robot0_eef_quat',
+            # 'robot0_eef_vel_lin',
+            # 'robot0_eef_vel_ang',
+            # 'robot0_gripper_qpos',
+            # 'robot0_gripper_qvel',
+            'agentview_image',
+            'agentview_depth',
+            # 'door_pos',
+            # 'handle_pos',
+            # 'door_to_eef_pos',
+            # 'handle_to_eef_pos',
+            # 'hinge_qpos',
+        ]
+        for observable in useless_observable_list:
+            rsenv.modify_observable(observable, 'enabled', False)
+            rsenv.modify_observable(observable, 'active', False)
+
+        print('Robosuite environment maked:',type(rsenv) , rsenv, dir(rsenv))
+        print(len(rsenv._observables.keys()))
+        print(rsenv._observables.keys())
+        
+        env = MyGymWrapper(
+            rsenv
         )
 
         env.reset(seed=seed + rank)
 
-        from stable_baselines3.common.monitor import Monitor
         return Monitor(env)
         #return env
     set_random_seed(seed)
