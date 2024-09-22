@@ -44,42 +44,13 @@ class MyGymWrapper(Wrapper, gym.Env):
             for idx in range(len(self.env.robots)):
                 keys += ["robot{}_proprio-state".format(idx)]
         self.keys = keys
-        print('keys: ', self.keys)
-
-        self.obs_not_known_to_agent = [
-            #'robot0_joint_pos',
-            'robot0_joint_pos_cos',
-            #'robot0_joint_pos_sin',
-            #'robot0_joint_vel',
-            #'robot0_eef_pos',
-            #'robot0_eef_quat',
-            #'robot0_eef_vel_lin',
-            #'robot0_eef_vel_ang',
-            #'robot0_gripper_qpos',
-            #'robot0_gripper_qvel',
-            #'agentview_image',
-            #'agentview_depth',
-            #'door_pos',
-            #'handle_pos',
-            #'door_to_eef_pos',
-            #'handle_to_eef_pos',
-            'hinge_qpos',
-        ]
-        print('obs_not_known_to_agent: ', self.obs_not_known_to_agent)
-
 
         # Gym specific attributes
         self.env.spec = None
 
         # set up observation and action spaces
         obs = self.env.reset()
-        # virtualkss start
-        print('obs:', type(obs), obs.keys(), obs)
-        print('keys:', type(self.keys), self.keys)
-        #self.env.modify_observable('hinge_qpos', 'enabled', False)
-        #self.env.modify_observable('hinge_qpos', 'active', False)
-        # virtualkss end
-        self.modality_dims = {key: obs[key].shape for key in self.keys}
+        #self.modality_dims = {key: obs[key].shape for key in self.keys} # should be commented out
         flat_ob = self._flatten_obs(obs)
         self.obs_dim = flat_ob.size
         high = np.inf * np.ones(self.obs_dim)
@@ -87,12 +58,8 @@ class MyGymWrapper(Wrapper, gym.Env):
         self.observation_space = spaces.Box(low, high)
         low, high = self.env.action_spec
         self.action_space = spaces.Box(low, high)
-
-    def control_obs(self, obs_dict):
-        for obs_name in self.obs_not_known_to_agent:
-            del obs_dict[obs_name]
     
-    def _flatten_obs(self, obs_dict, verbose=True):
+    def _flatten_obs(self, obs_dict, verbose=False):
         """
         Filters keys of interest out and concatenate the information.
 
@@ -124,9 +91,6 @@ class MyGymWrapper(Wrapper, gym.Env):
             else:
                 raise TypeError("Seed must be an integer type!")
         ob_dict = self.env.reset()
-        #
-        self.control_obs(ob_dict)
-        #
         return self._flatten_obs(ob_dict), {}
 
     def step(self, action):
@@ -146,13 +110,6 @@ class MyGymWrapper(Wrapper, gym.Env):
                 - (dict) misc information
         """
         ob_dict, reward, terminated, info = self.env.step(action)
-        #
-        self.control_obs(ob_dict)
-        #print('ob_dict: ', ob_dict)
-        import pprint
-        print('here')
-        pprint.pprint(ob_dict)
-        #
         return self._flatten_obs(ob_dict), reward, terminated, False, info
 
     def compute_reward(self, achieved_goal, desired_goal, info):

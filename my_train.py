@@ -13,7 +13,7 @@ if __name__ == '__main__':
     env_id = 'door'
     n_cpu = 1 # dale3: 72, biomen: 24
     sac_policy = 'MlpPolicy' # 입력이 구조 없는 vector라서 cnn보다 mlp가 맞음
-    tot_timesteps = 1
+    tot_timesteps = 1000
     
     from stable_baselines3.common.logger import configure
     log_dir = f'./{env_id}_tensorboard/'
@@ -21,44 +21,6 @@ if __name__ == '__main__':
     new_logger = configure(log_dir, ["stdout", "csv", "tensorboard"])
 
     vec_env = SubprocVecEnv([make_env(env_id, i, False) for i in range(n_cpu)])
-
-    useless_observable_names = [
-        #'robot0_joint_pos',
-        # 'robot0_joint_pos_cos',
-        # 'robot0_joint_pos_sin',
-        # 'robot0_joint_vel',
-        # 'robot0_eef_pos',
-        # 'robot0_eef_quat',
-        # 'robot0_eef_vel_lin',
-        # 'robot0_eef_vel_ang',
-        # 'robot0_gripper_qpos',
-        # 'robot0_gripper_qvel',
-        # 'agentview_image',
-        # 'agentview_depth',
-        # 'door_pos',
-        # 'handle_pos',
-        # 'door_to_eef_pos',
-        # 'handle_to_eef_pos',
-        # 'hinge_qpos',
-    ]
-
-    # print('self', self, dir(self))
-    # print('\n')
-    # self.modify_observable('robot0_joint_pos', 'enabled', False)
-    # print('self._observables', self._observables, dir(self._observables))
-    # print('\n')
-    # print('self._observables["robot0_joint_pos"]', self._observables['robot0_joint_pos'], dir(self._observables['robot0_joint_pos']))
-    
-    vec_env.env_method('get_observables')
-    for useless_observable_name in useless_observable_names:
-        #self.modify_observable(useless_observable_name, 'enabled', False)
-        #self.modify_observable(useless_observable_name, 'active', False)
-        vec_env.env_method('modify_observable', useless_observable_name, 'enabled', False)
-        vec_env.env_method('modify_observable', useless_observable_name, 'active', False)
-    vec_env.env_method('get_observables')
-    vec_env.env_method('reset')
-    vec_env.env_method('get_observables')
-    import pdb;pdb.set_trace()
 
     model = SAC(sac_policy, 
                 vec_env, 
