@@ -19,17 +19,20 @@ def make_env(env_id: str, rank: int, render: bool, seed: int = 0):
 
         rsenv = suite.make(
                 "MyDoor",
-                robots="UR5e", # use UR5e robot
-                controller_configs=load_controller_config(default_controller="OSC_POSE"), # JOINT_POSITION
+                robots="Panda", # robot type
+                controller_configs=load_controller_config(default_controller="OSC_POSE"), # OSC_POSE, JOINT_POSE, etc.
                 use_latch=False, # for easy
-                use_camera_obs=True,  # use pixel observations
-                reward_shaping=False,  # use dense rewards
+                use_camera_obs=False,  # use pixel observations
+                reward_shaping=True,  # use dense rewards
                 has_renderer=render,  # make sure we can render to the screen
-                has_offscreen_renderer=True,  # not needed since not using pixel obs
+                has_offscreen_renderer=False,  # not needed since not using pixel obs
                 control_freq=20,  # control should happen fast enough so that simulation looks smooth,
                 horizon=500,
-                camera_depths=True,
+                camera_depths=False,
                 camera_names='agentview',
+
+                hard_reset = False,
+                ignore_done = True,
             )
 
         full_observable_list = [
@@ -43,8 +46,8 @@ def make_env(env_id: str, rank: int, render: bool, seed: int = 0):
             'robot0_eef_vel_ang',
             'robot0_gripper_qpos',
             'robot0_gripper_qvel',
-            'agentview_image',
-            'agentview_depth',
+            # 'agentview_image',
+            # 'agentview_depth',
             'door_pos',
             'handle_pos',
             'door_to_eef_pos',
@@ -66,8 +69,8 @@ def make_env(env_id: str, rank: int, render: bool, seed: int = 0):
             # 'robot0_eef_vel_ang',
             # 'robot0_gripper_qpos',
             # 'robot0_gripper_qvel',
-            'agentview_image',
-            'agentview_depth',
+            # 'agentview_image',
+            # 'agentview_depth',
             # 'door_pos',
             # 'handle_pos',
             # 'door_to_eef_pos',

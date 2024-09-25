@@ -10,10 +10,10 @@ from my_utils import make_env
 
 
 if __name__ == '__main__':
-    env_id = 'door'
-    n_cpu = 1 # dale3: 72, biomen: 24
+    env_id = 'door_panda_osc_dense_bm'
+    n_cpu = 20 # dale3: 72, biomen: 24
     sac_policy = 'MlpPolicy' # 입력이 구조 없는 vector라서 cnn보다 mlp가 맞음
-    tot_timesteps = 1000
+    tot_timesteps = 1000000
     
     from stable_baselines3.common.logger import configure
     log_dir = f'./{env_id}_tensorboard/'
@@ -25,7 +25,7 @@ if __name__ == '__main__':
     model = SAC(sac_policy, 
                 vec_env, 
                 learning_rate = 0.0003,
-                buffer_size = tot_timesteps,
+                buffer_size = 1000000,
                 learning_starts = 3300,
                 batch_size = 128,
                 tau = 0.005,
@@ -37,7 +37,7 @@ if __name__ == '__main__':
                 #replay_buffer_kwargs
                 #optimize_memory_usage
                 ent_coef= 'auto',
-                target_update_interval = 1,
+                target_update_interval = 5,#1,
                 target_entropy = 'auto',
                 use_sde = False,
                 sde_sample_freq = -1,
