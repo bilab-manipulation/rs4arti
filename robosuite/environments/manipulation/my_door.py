@@ -246,10 +246,10 @@ class MyDoor(SingleArmEnv):
             
             # modified by virtualkss (240907)
             # Add hinge angle component
-            opening_reward = self.sim.data.qpos[self.hinge_qpos_addr]
-            if opening_reward > 0.3:
-                opening_reward = 0.3
-            reward += opening_reward
+            # opening_reward = self.sim.data.qpos[self.hinge_qpos_addr]
+            # if opening_reward > 0.3:
+            #     opening_reward = 0.3
+            # reward += opening_reward
 
         # Scale reward if requested
         if self.reward_scale is not None:
@@ -393,7 +393,6 @@ class MyDoor(SingleArmEnv):
                 return np.array([self.sim.data.qpos[self.hinge_qpos_addr]])
 
             sensors = [door_pos, handle_pos, door_to_eef_pos, handle_to_eef_pos, hinge_qpos]
-            #sensors = [hinge_qpos]
             names = [s.__name__ for s in sensors]
 
             # Also append handle qpos if we're using a locked door version with rotatable handle

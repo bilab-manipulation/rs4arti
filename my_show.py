@@ -7,11 +7,12 @@ from robosuite.utils.camera_utils import get_camera_intrinsic_matrix
 from my_utils import make_env
 
 if __name__ == '__main__':
-    env_id = 'door'
+    env_id = 'door_panda_osc_dense_bm'
     horizon = 500
+    seed = 0
     
     print('making env')
-    vec_env = DummyVecEnv([make_env(env_id, 0, True)])
+    vec_env = DummyVecEnv([make_env(env_id, seed, True)])
 
     print('load model')
     model = SAC.load(env_id, env=vec_env)
@@ -45,36 +46,37 @@ if __name__ == '__main__':
 
         print('step forward')
         obs, rewards, dones, info = vec_env.step(action)
-        print(t, len(obs), obs)
+        #print(t, len(obs), obs)
+        print(t, rewards)
         
         print('making rgbd image')
-        color_raw = o3d.geometry.Image(vec_env.envs[0].env.env._observables['agentview_image'].obs)
-        depth_raw = o3d.geometry.Image(vec_env.envs[0].env.env._observables['agentview_depth'].obs)
-        #print(vec_env.envs[0].env.env._observables['agentview_depth'].obs.dtype)
-        rgbd_image = o3d.geometry.RGBDImage.create_from_color_and_depth(color_raw, depth_raw)
-        #print(rgbd_image)
+        # color_raw = o3d.geometry.Image(vec_env.envs[0].env.env._observables['agentview_image'].obs)
+        # depth_raw = o3d.geometry.Image(vec_env.envs[0].env.env._observables['agentview_depth'].obs)
+        # #print(vec_env.envs[0].env.env._observables['agentview_depth'].obs.dtype)
+        # rgbd_image = o3d.geometry.RGBDImage.create_from_color_and_depth(color_raw, depth_raw)
+        # #print(rgbd_image)
         
-        print('making rgbd image plot')
-        plt.subplot(1, 2, 1)
-        plt.title('grayscale image')
-        plt.imshow(rgbd_image.color)
-        plt.subplot(1, 2, 2)
-        plt.title('depth image')
-        plt.imshow(rgbd_image.depth)
-        print('plot rgbd image')
-        #plt.show()
-        plt.close()
+        # print('making rgbd image plot')
+        # plt.subplot(1, 2, 1)
+        # plt.title('grayscale image')
+        # plt.imshow(rgbd_image.color)
+        # plt.subplot(1, 2, 2)
+        # plt.title('depth image')
+        # plt.imshow(rgbd_image.depth)
+        # print('plot rgbd image')
+        # #plt.show()
+        # plt.close()
 
-        print('here')
-        cam_intr = o3d.camera.PinholeCameraIntrinsic(o3d.camera.PinholeCameraIntrinsicParameters.PrimeSenseDefault)
-        print(cam_intr)
+        # print('here')
+        # cam_intr = o3d.camera.PinholeCameraIntrinsic(o3d.camera.PinholeCameraIntrinsicParameters.PrimeSenseDefault)
+        # print(cam_intr)
 
-        print('making point cloud from rgbd image')
-        pcd = o3d.geometry.PointCloud.create_from_rgbd_image(rgbd_image, o3d.camera.PinholeCameraIntrinsic(o3d.camera.PinholeCameraIntrinsicParameters.PrimeSenseDefault))
-        # Flip it, otherwise the pointcloud will be upside down
-        pcd.transform([[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]])
-        print('plot pc by using plotly')
-        #o3d.visualization.draw_plotly([pcd])
+        # print('making point cloud from rgbd image')
+        # pcd = o3d.geometry.PointCloud.create_from_rgbd_image(rgbd_image, o3d.camera.PinholeCameraIntrinsic(o3d.camera.PinholeCameraIntrinsicParameters.PrimeSenseDefault))
+        # # Flip it, otherwise the pointcloud will be upside down
+        # pcd.transform([[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]])
+        # print('plot pc by using plotly')
+        # #o3d.visualization.draw_plotly([pcd])
         
         print('rendering env')
         vec_env.envs[0].render()
