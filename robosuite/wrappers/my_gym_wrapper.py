@@ -48,9 +48,30 @@ class MyGymWrapper(Wrapper, gym.Env):
         # Gym specific attributes
         self.env.spec = None
 
+        # for filter obs
+        self.interested_obs_list = [
+            'robot0_joint_pos',
+            # 'robot0_joint_pos_cos',
+            # 'robot0_joint_pos_sin',
+            # 'robot0_joint_vel',
+            'robot0_eef_pos',
+            'robot0_eef_quat',
+            # 'robot0_eef_vel_lin',
+            # 'robot0_eef_vel_ang',
+            'robot0_gripper_qpos',
+            # 'robot0_gripper_qvel',
+            # 'agentview_image',
+            # 'agentview_depth',
+            # 'door_pos',
+            'handle_pos',
+            # 'door_to_eef_pos',
+            'handle_to_eef_pos',
+            #'hinge_qpos',
+        ]
+
         # set up observation and action spaces
         obs = self.env.reset()
-        #self.modality_dims = {key: obs[key].shape for key in self.keys} # should be commented out
+        self.modality_dims = {key: obs[key].shape for key in self.keys} # should be commented out
         flat_ob = self._flatten_obs(obs)
         self.obs_dim = flat_ob.size
         high = np.inf * np.ones(self.obs_dim)
@@ -70,6 +91,14 @@ class MyGymWrapper(Wrapper, gym.Env):
         Returns:
             np.array: observations flattened into a 1d array
         """
+        obs_list = []
+        for key in obs_dict.keys():
+            if key in self.interested_obs_list:
+                if verbose:
+                    print("adding key: {}".format(key), len(obs_dict[key].flatten()))
+                obs_list.append(np.array(obs_dict[key]).flatten())
+        return np.concatenate(obs_list)
+        
         ob_lst = []
         for key in self.keys:
             if key in obs_dict:
