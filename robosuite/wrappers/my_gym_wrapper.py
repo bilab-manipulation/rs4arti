@@ -66,7 +66,7 @@ class MyGymWrapper(Wrapper, gym.Env):
             'handle_pos',
             # 'door_to_eef_pos',
             'handle_to_eef_pos',
-            #'hinge_qpos',
+            # 'hinge_qpos',
         ]
 
         # set up observation and action spaces
