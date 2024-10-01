@@ -10,7 +10,7 @@ from my_utils import make_env
 
 
 if __name__ == '__main__':
-    env_id = 'door_panda_osc_dense_bm'
+    env_id = 'door_panda_osc_sparse_nohinge'
     n_cpu = 20 # dale3: 72, biomen: 24
     sac_policy = 'MlpPolicy' # 입력이 구조 없는 vector라서 cnn보다 mlp가 맞음
     tot_timesteps = 1000000
@@ -24,7 +24,7 @@ if __name__ == '__main__':
 
     model = SAC(sac_policy, 
                 vec_env, 
-                learning_rate = 0.0003,
+                learning_rate = 0.00075,
                 buffer_size = 1000000,
                 learning_starts = 3300,
                 batch_size = 128,

@@ -7,17 +7,20 @@ from robosuite.utils.camera_utils import get_camera_intrinsic_matrix
 from my_utils import make_env
 
 if __name__ == '__main__':
-    env_id = 'door_panda_osc_dense_bm'
+    env_id = 'door_panda_osc_sparse_nohinge'
     horizon = 500
     seed = 0
     
     print('making env')
-    vec_env = DummyVecEnv([make_env(env_id, seed, True)])
+    vec_env = DummyVecEnv([make_env(env_id, 0, True, seed)])
 
     print('load model')
     model = SAC.load(env_id, env=vec_env)
 
+    import pdb;pdb.set_trace()
+
     print('reset env')
+    vec_env.seed(seed)
     obs = vec_env.reset()
 
     print('_observables: ')
@@ -40,14 +43,19 @@ if __name__ == '__main__':
 
     # import pdb; pdb.set_trace()
 
+    r_list = []
+
     for t in range(horizon):
         print('predict by model')
         action, _states = model.predict(obs)
+        print('action: ', action, _states)
+        #import pdb; pdb.set_trace()
 
         print('step forward')
         obs, rewards, dones, info = vec_env.step(action)
         #print(t, len(obs), obs)
-        print(t, rewards)
+        print(f't: {t}\t obs: {len(obs[0])} {obs}\t rewards: {rewards}\t dones: {dones}\t, info: {info}\t')
+        r_list.append(rewards)
         
         print('making rgbd image')
         # color_raw = o3d.geometry.Image(vec_env.envs[0].env.env._observables['agentview_image'].obs)
@@ -81,4 +89,5 @@ if __name__ == '__main__':
         print('rendering env')
         vec_env.envs[0].render()
 
-        #import pdb;pdb.set_trace()
+    plt.plot(r_list)
+    plt.show()
