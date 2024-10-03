@@ -6,7 +6,7 @@ from robosuite.controllers import load_controller_config
 from stable_baselines3.common.utils import set_random_seed
 from stable_baselines3.common.monitor import Monitor
 
-def make_env(env_id: str, rank: int, render: bool, hinge: str, seed: int = 0):
+def make_env(env_id: str, rank: int, render: bool, hinge: bool, latch: bool, seed: int = 0):
     """
     Utility function for multiprocessed env.
 
@@ -21,7 +21,7 @@ def make_env(env_id: str, rank: int, render: bool, hinge: str, seed: int = 0):
                 "MyDoor",
                 robots="Panda", # robot type
                 controller_configs=load_controller_config(default_controller="OSC_POSE"), # OSC_POSE, JOINT_POSE, etc.
-                use_latch=True, # for easy
+                use_latch=latch, # for easy
                 use_camera_obs=False,  # use pixel observations
                 reward_shaping=False,  # use dense rewards
                 has_renderer=render,  # make sure we can render to the screen
@@ -57,6 +57,8 @@ def make_env(env_id: str, rank: int, render: bool, hinge: str, seed: int = 0):
             'handle_to_eef_pos',        # True, True
             'hinge_qpos',               # True, True
         ]
+        if latch == True:
+            full_observable_list.append('handle_qpos')
         for observable in full_observable_list:
             rsenv.modify_observable(observable, 'enabled', True)
             rsenv.modify_observable(observable, 'active', True)
@@ -89,7 +91,7 @@ def make_env(env_id: str, rank: int, render: bool, hinge: str, seed: int = 0):
         # print(rsenv._observables.keys())
         
         env = MyGymWrapper(
-            rsenv, hinge
+            rsenv, hinge, latch
         )
 
         env.reset(seed=seed + rank)
