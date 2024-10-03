@@ -7,17 +7,18 @@ from robosuite.utils.camera_utils import get_camera_intrinsic_matrix
 from my_utils import make_env
 
 if __name__ == '__main__':
-    seed = 2
-    hinge = 'no'
-    env_id = f'largelr_door_panda_osc_sparse_hinge{hinge}_{seed}'
+    seed = 3
+    hinge = True
+    latch = True
+    env_id = f'door_panda_osc_dense_hinge{hinge}_latch{latch}_{seed}'
     horizon = 500
     print(f'hinge: {hinge} seed: {seed} env_id: {env_id}')
 
     success_list = []
-    for i in range(100):
+    for i in range(10):
         print(f'iteration: {i}')
         #print('making env')
-        vec_env = DummyVecEnv([make_env(env_id, 0, True, hinge, i)])
+        vec_env = DummyVecEnv([make_env(env_id, 0, True, hinge, latch, i)])
         
         #print('load model')
         model = SAC.load(env_id, env=vec_env)
@@ -83,7 +84,7 @@ if __name__ == '__main__':
             # #o3d.visualization.draw_plotly([pcd])
             
             #print('rendering env')
-            #vec_env.envs[0].render()
+            vec_env.envs[0].render()
         
         if rewards[0] >=1:
             success_list.append(True)
