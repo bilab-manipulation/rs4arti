@@ -8,20 +8,31 @@ import os
 
 from my_utils import make_env
 
+import argparse
 
 if __name__ == '__main__':
-    env_id = 'door_panda_osc_sparse_nohinge'
+
+    parser = argparse.ArgumentParser(description='')
+    parser.add_argument('--hinge', type=str)
+    parser.add_argument('--seed', type=int)
+    args = parser.parse_args()
+
+    print(f'hinge: {args.hinge} {type(args.hinge)}')
+    print(f'seed: {args.seed} {type(args.seed)}')
+
+    hinge = args.hinge
+    seed = args.seed# 4
+    env_id = f'clean_door_panda_osc_sparse_hinge{hinge}_{seed}'
     n_cpu = 20 # dale3: 72, biomen: 24
     sac_policy = 'MlpPolicy' # 입력이 구조 없는 vector라서 cnn보다 mlp가 맞음
     tot_timesteps = 1000000
-    seed = 0
     
     from stable_baselines3.common.logger import configure
     log_dir = f'./{env_id}_tensorboard/'
     os.makedirs(log_dir, exist_ok = True)
     new_logger = configure(log_dir, ["stdout", "csv", "tensorboard"])
 
-    vec_env = SubprocVecEnv([make_env(env_id, i, False, seed) for i in range(n_cpu)])
+    vec_env = SubprocVecEnv([make_env(env_id, i, False, hinge, seed) for i in range(n_cpu)])
 
     model = SAC(sac_policy, 
                 vec_env, 

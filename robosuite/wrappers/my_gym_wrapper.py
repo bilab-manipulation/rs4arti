@@ -22,7 +22,7 @@ class MyGymWrapper(Wrapper, gym.Env):
         AssertionError: [Object observations must be enabled if no keys]
     """
 
-    def __init__(self, env, keys=None):
+    def __init__(self, env, hinge, keys=None):
         # Run super method
         super().__init__(env=env)
         # Create name for gym
@@ -63,11 +63,18 @@ class MyGymWrapper(Wrapper, gym.Env):
             # 'agentview_image',
             # 'agentview_depth',
             # 'door_pos',
-            'handle_pos',
+            # 'handle_pos',
             # 'door_to_eef_pos',
             'handle_to_eef_pos',
             # 'hinge_qpos',
         ]
+        if hinge == 'yes':
+            print('add hinge')
+            self.interested_obs_list.append('hinge_qpos')
+        elif hinge == 'no':
+            print('no hinge')
+        else:
+            print('undefined hinge')
 
         # set up observation and action spaces
         obs = self.env.reset()

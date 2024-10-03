@@ -6,7 +6,7 @@ from robosuite.controllers import load_controller_config
 from stable_baselines3.common.utils import set_random_seed
 from stable_baselines3.common.monitor import Monitor
 
-def make_env(env_id: str, rank: int, render: bool, seed: int = 0):
+def make_env(env_id: str, rank: int, render: bool, hinge: str, seed: int = 0):
     """
     Utility function for multiprocessed env.
 
@@ -35,8 +35,8 @@ def make_env(env_id: str, rank: int, render: bool, seed: int = 0):
                 ignore_done = False,
             )
         
-        print('enabled observables: ', len(rsenv.enabled_observables), rsenv.enabled_observables)
-        print('active observables: ', len(rsenv.active_observables), rsenv.active_observables)
+        # print('enabled observables: ', len(rsenv.enabled_observables), rsenv.enabled_observables)
+        # print('active observables: ', len(rsenv.active_observables), rsenv.active_observables)
 
         full_observable_list = [        # enabled, active
             'robot0_joint_pos',         # True, False
@@ -84,12 +84,12 @@ def make_env(env_id: str, rank: int, render: bool, seed: int = 0):
             rsenv.modify_observable(observable, 'enabled', False)
             rsenv.modify_observable(observable, 'active', False)
 
-        print('Robosuite environment maked:',type(rsenv) , rsenv, dir(rsenv))
-        print(len(rsenv._observables.keys()))
-        print(rsenv._observables.keys())
+        # print('Robosuite environment maked:',type(rsenv) , rsenv, dir(rsenv))
+        # print(len(rsenv._observables.keys()))
+        # print(rsenv._observables.keys())
         
         env = MyGymWrapper(
-            rsenv
+            rsenv, hinge
         )
 
         env.reset(seed=seed + rank)
