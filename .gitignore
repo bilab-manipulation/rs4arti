@@ -1,5 +1,5 @@
 # modified by virtualkss (240907)
-*.zip
+# *.zip
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
