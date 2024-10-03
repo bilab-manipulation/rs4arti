@@ -14,15 +14,30 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('--hinge', type=str)
+    parser.add_argument('--latch', type=str)
     parser.add_argument('--seed', type=int)
     args = parser.parse_args()
 
     print(f'hinge: {args.hinge} {type(args.hinge)}')
+    print(f'latch: {args.latch} {type(args.latch)}')
     print(f'seed: {args.seed} {type(args.seed)}')
 
     hinge = args.hinge
+    if hinge == 'yes':
+        hinge = True
+    elif hinge == 'no':
+        hinge = False
+    else:
+        print('undefined hinge')
+    latch = args.latch
+    if latch == 'yes':
+        latch = True
+    elif latch == 'no':
+        latch = False
+    else:
+        print('undefined latch')
     seed = args.seed# 4
-    env_id = f'latch_door_panda_osc_sparse_hinge{hinge}_{seed}'
+    env_id = f'door_panda_osc_sparse_hinge{hinge}_latch{latch}_{seed}'
     n_cpu = 20 # dale3: 72, biomen: 24
     sac_policy = 'MlpPolicy' # 입력이 구조 없는 vector라서 cnn보다 mlp가 맞음
     tot_timesteps = 1000000
@@ -32,7 +47,7 @@ if __name__ == '__main__':
     os.makedirs(log_dir, exist_ok = True)
     new_logger = configure(log_dir, ["stdout", "csv", "tensorboard"])
 
-    vec_env = SubprocVecEnv([make_env(env_id, i, False, hinge, seed) for i in range(n_cpu)])
+    vec_env = SubprocVecEnv([make_env(env_id, i, False, hinge, latch, seed) for i in range(n_cpu)])
 
     model = SAC(sac_policy, 
                 vec_env, 
