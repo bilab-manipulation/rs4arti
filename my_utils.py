@@ -21,7 +21,7 @@ def make_env(env_id: str, rank: int, render: bool, hinge: str, seed: int = 0):
                 "MyDoor",
                 robots="Panda", # robot type
                 controller_configs=load_controller_config(default_controller="OSC_POSE"), # OSC_POSE, JOINT_POSE, etc.
-                use_latch=False, # for easy
+                use_latch=True, # for easy
                 use_camera_obs=False,  # use pixel observations
                 reward_shaping=False,  # use dense rewards
                 has_renderer=render,  # make sure we can render to the screen
