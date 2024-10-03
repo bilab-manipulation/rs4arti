@@ -7,10 +7,11 @@ from robosuite.utils.camera_utils import get_camera_intrinsic_matrix
 from my_utils import make_env
 
 if __name__ == '__main__':
-    seed = 0
-    hinge = 'yes'
+    seed = 9
+    hinge = 'no'
     env_id = f'clean_door_panda_osc_sparse_hinge{hinge}_{seed}'
     horizon = 500
+    print(f'hinge: {hinge} seed: {seed} env_id: {env_id}')
 
     success_list = []
     for i in range(100):
