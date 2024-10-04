@@ -22,7 +22,7 @@ class MyGymWrapper(Wrapper, gym.Env):
         AssertionError: [Object observations must be enabled if no keys]
     """
 
-    def __init__(self, env, hinge, latch, keys=None):
+    def __init__(self, env, setting, keys=None):
         # Run super method
         super().__init__(env=env)
         # Create name for gym
@@ -49,6 +49,7 @@ class MyGymWrapper(Wrapper, gym.Env):
         self.env.spec = None
 
         # for filter obs
+        self.setting = setting
         self.interested_obs_list = [
             'robot0_joint_pos',
             # 'robot0_joint_pos_cos',
@@ -66,25 +67,16 @@ class MyGymWrapper(Wrapper, gym.Env):
             # 'handle_pos',
             # 'door_to_eef_pos',
             # 'handle_to_eef_pos',
-            # 'hinge_qpos',
             # 'handle_qpos',
+            # 'hinge_qpos',
         ]
-
-        if hinge == True:
-            print('add hinge')
-            self.interested_obs_list.append('hinge_qpos')
-        elif hinge == False:
-            print('no hinge')
-        else:
-            print('undefined hinge')
-
-        if latch == True:
-            print('add latch')
+        if self.setting == 'candidate':
             self.interested_obs_list.append('handle_qpos')
-        elif latch == False:
-            print('no latch')
+            self.interested_obs_list.append('hinge_qpos')
+        elif self.setting == 'blind':
+            pass
         else:
-            print('undefined latch')
+            ValueError('undefined setting')
 
         # set up observation and action spaces
         obs = self.env.reset()

@@ -4,6 +4,7 @@
 from stable_baselines3 import SAC
 from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv
 from stable_baselines3.common.callbacks import EvalCallback
+from stable_baselines3.common.logger import configure
 import os
 
 from my_utils import make_env
@@ -13,41 +14,32 @@ import argparse
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='')
-    parser.add_argument('--hinge', type=str)
-    parser.add_argument('--latch', type=str)
-    parser.add_argument('--seed', type=int)
+    parser.add_argument('--setting', type=str) # 'candidate', 'blind'
+    parser.add_argument('--seed', type=int) # int
     args = parser.parse_args()
 
-    print(f'hinge: {args.hinge} {type(args.hinge)}')
-    print(f'latch: {args.latch} {type(args.latch)}')
-    print(f'seed: {args.seed} {type(args.seed)}')
+    print(f'setting: {type(args.setting)} {args.setting} ')
+    print(f'seed: {type(args.seed)} {args.seed} ')
 
-    hinge = args.hinge
-    if hinge == 'yes':
-        hinge = True
-    elif hinge == 'no':
-        hinge = False
-    else:
-        print('undefined hinge')
-    latch = args.latch
-    if latch == 'yes':
-        latch = True
-    elif latch == 'no':
-        latch = False
-    else:
-        print('undefined latch')
-    seed = args.seed# 4
-    env_id = f'nodist_door_panda_osc_dense_hinge{hinge}_latch{latch}_{seed}'
-    n_cpu = 20 # dale3: 72, biomen: 24
+    setting = args.setting
+    seed = args.seed
+    env_id = f'{setting}_{seed}'
+    n_cpu = 14 # dale3: 72, biomen: 24
     sac_policy = 'MlpPolicy' # 입력이 구조 없는 vector라서 cnn보다 mlp가 맞음
     tot_timesteps = 1000000
+    render = False
+    if setting == 'candidate':
+        reward_shaping = True
+    elif setting == 'blind':
+        reward_shaping = False
+    else:
+        ValueError('undefined reward_shaping')
     
-    from stable_baselines3.common.logger import configure
-    log_dir = f'./{env_id}_tensorboard/'
+    log_dir = f'./tb_logs/{env_id}_tb/'
     os.makedirs(log_dir, exist_ok = True)
     new_logger = configure(log_dir, ["stdout", "csv", "tensorboard"])
 
-    vec_env = SubprocVecEnv([make_env(env_id, i, False, hinge, latch, seed) for i in range(n_cpu)])
+    vec_env = SubprocVecEnv([make_env(env_id, rank, render, reward_shaping, setting, seed) for rank in range(n_cpu)])
 
     model = SAC(sac_policy, 
                 vec_env, 
