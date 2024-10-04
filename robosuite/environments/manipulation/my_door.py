@@ -236,17 +236,18 @@ class MyDoor(SingleArmEnv):
         # else, we consider only the case if we're using shaped rewards
         elif self.reward_shaping:
             # Add reaching component
-            dist = np.linalg.norm(self._gripper_to_handle)
-            reaching_reward = 0.25 * (1 - np.tanh(10.0 * dist))
-            reward += reaching_reward
-            # Add rotating component if we're using a locked door
+            # dist = np.linalg.norm(self._gripper_to_handle)
+            # reaching_reward = 0.25 * (1 - np.tanh(10.0 * dist))
+            # reward += reaching_reward
+            # # Add rotating component if we're using a locked door
             if self.use_latch:
                 handle_qpos = self.sim.data.qpos[self.handle_qpos_addr]
                 reward += np.clip(0.25 * np.abs(handle_qpos / (0.5 * np.pi)), -0.25, 0.25)
             
             # modified by virtualkss (240907)
             # Add hinge angle component
-            # opening_reward = self.sim.data.qpos[self.hinge_qpos_addr]
+            opening_reward = self.sim.data.qpos[self.hinge_qpos_addr]
+            reward += np.clip(0.25 * np.abs(opening_reward / (0.5 * np.pi)), -0.25, 0.25)
             # if opening_reward > 0.3:
             #     opening_reward = 0.3
             # reward += opening_reward
