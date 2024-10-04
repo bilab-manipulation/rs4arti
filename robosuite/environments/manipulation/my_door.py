@@ -158,7 +158,11 @@ class MyDoor(SingleArmEnv):
         camera_segmentations=None,  # {None, instance, class, element}
         renderer="mujoco",
         renderer_config=None,
+
+        setting=None,
     ):
+        self.setting = setting
+
         # settings for table top (hardcoded since it's not an essential part of the environment)
         self.table_full_size = (0.8, 0.3, 0.05)
         self.table_offset = (-0.2, -0.35, 0.8)
@@ -243,15 +247,12 @@ class MyDoor(SingleArmEnv):
             if self.use_latch:
                 handle_qpos = self.sim.data.qpos[self.handle_qpos_addr]
                 reward += np.clip(0.25 * np.abs(handle_qpos / (0.5 * np.pi)), -0.25, 0.25)
-            
-            # modified by virtualkss (240907)
-            # Add hinge angle component
-            opening_reward = self.sim.data.qpos[self.hinge_qpos_addr]
-            reward += np.clip(0.25 * np.abs(opening_reward / (0.5 * np.pi)), -0.25, 0.25)
-            # if opening_reward > 0.3:
-            #     opening_reward = 0.3
-            # reward += opening_reward
-
+                #print('use_latch')
+            if self.setting == 'candidate':
+                hinge_qpos = self.sim.data.qpos[self.hinge_qpos_addr]
+                reward += np.clip(0.25 * np.abs(hinge_qpos / (0.5 * np.pi)), -0.25, 0.25)
+                #print('candidate')
+        
         # Scale reward if requested
         if self.reward_scale is not None:
             reward *= self.reward_scale / 1.0
