@@ -37,7 +37,7 @@ if __name__ == '__main__':
     else:
         print('undefined latch')
     seed = args.seed# 4
-    env_id = f'door_panda_osc_sparse_hinge{hinge}_latch{latch}_{seed}'
+    env_id = f'nodist_door_panda_osc_dense_hinge{hinge}_latch{latch}_{seed}'
     n_cpu = 20 # dale3: 72, biomen: 24
     sac_policy = 'MlpPolicy' # 입력이 구조 없는 vector라서 cnn보다 mlp가 맞음
     tot_timesteps = 1000000

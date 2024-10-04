@@ -65,7 +65,7 @@ class MyGymWrapper(Wrapper, gym.Env):
             # 'door_pos',
             # 'handle_pos',
             # 'door_to_eef_pos',
-            'handle_to_eef_pos',
+            # 'handle_to_eef_pos',
             # 'hinge_qpos',
             # 'handle_qpos',
         ]
