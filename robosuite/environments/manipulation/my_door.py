@@ -233,6 +233,8 @@ class MyDoor(SingleArmEnv):
         """
         reward = 0.0
 
+        #print(f'door_pos: {np.array(self.sim.data.body_xpos[self.object_body_ids["door"]])}')
+
         # sparse completion reward
         if self._check_success():
             reward = 1.0

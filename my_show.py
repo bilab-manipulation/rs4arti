@@ -2,29 +2,45 @@ from stable_baselines3 import SAC
 from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv
 import open3d as o3d
 import matplotlib.pyplot as plt
+import argparse
 
 from robosuite.utils.camera_utils import get_camera_intrinsic_matrix
 from my_utils import make_env
 
 if __name__ == '__main__':
-    seed = 8
-    hinge = True
-    latch = True
-    env_id = f'nodist_door_panda_osc_dense_hinge{hinge}_latch{latch}_{seed}'
+    parser = argparse.ArgumentParser(description='')
+    parser.add_argument('--setting', type=str) # 'candidate', 'blind'
+    parser.add_argument('--seed', type=int) # int
+    args = parser.parse_args()
+
+    print(f'setting: {type(args.setting)} {args.setting} ')
+    print(f'seed: {type(args.seed)} {args.seed} ')
+
+    setting = args.setting
+    seed = args.seed
+    env_id = f'{setting}_{seed}'
+    n_cpu = 1 # fix
+    render = False
+    if setting == 'candidate':
+        reward_shaping = True
+    elif setting == 'blind':
+        reward_shaping = False
+    else:
+        ValueError('undefined reward_shaping')
     horizon = 500
-    print(f'hinge: {hinge} seed: {seed} env_id: {env_id}')
 
     success_list = []
     for i in range(100):
         print(f'iteration: {i}')
+        
         #print('making env')
-        vec_env = DummyVecEnv([make_env(env_id, 0, True, hinge, latch, i)])
+        vec_env = DummyVecEnv([make_env(env_id, rank, render, reward_shaping, setting, seed + i) for rank in range(n_cpu)])
         
         #print('load model')
         model = SAC.load(env_id, env=vec_env)
 
         #print('reset env')
-        vec_env.seed(i)
+        vec_env.seed(i) # need to check!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         obs = vec_env.reset()
 
         # print('_observables: ')
@@ -92,3 +108,6 @@ if __name__ == '__main__':
             success_list.append(False)
     
     print(f'success rate: {success_list.count(True) / len(success_list) * 100} %')
+    # file_with.py
+    with open(f"{env_id}.txt", "w") as f:
+        f.write(f'success rate: {success_list.count(True) / len(success_list) * 100} %')

@@ -6,13 +6,12 @@ from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv
 from stable_baselines3.common.callbacks import EvalCallback
 from stable_baselines3.common.logger import configure
 import os
+import argparse
 
 from my_utils import make_env
 
-import argparse
 
 if __name__ == '__main__':
-
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('--setting', type=str) # 'candidate', 'blind'
     parser.add_argument('--seed', type=int) # int
@@ -74,7 +73,7 @@ if __name__ == '__main__':
 
     #model.learn(total_timesteps=tot_timesteps, log_interval=4, callback = eval_callback, progress_bar = True, )
     model.set_logger(new_logger)
-    model.learn(total_timesteps=tot_timesteps, log_interval=4, progress_bar = True)
+    model.learn(total_timesteps=tot_timesteps, log_interval=10, progress_bar = True)
     model.save(env_id)
 
     del model
