@@ -10,6 +10,7 @@ from my_utils import make_env
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('--setting', type=str) # 'candidate', 'blind'
+    parser.add_argument('--render', type=str) # 'yes'
     parser.add_argument('--seed', type=int) # int
     args = parser.parse_args()
 
@@ -18,9 +19,9 @@ if __name__ == '__main__':
 
     setting = args.setting
     seed = args.seed
+    render = args.render
     env_id = f'{setting}_{seed}'
     n_cpu = 1 # fix
-    render = False
     if setting == 'candidate':
         reward_shaping = True
     elif setting == 'blind':
@@ -29,9 +30,11 @@ if __name__ == '__main__':
         ValueError('undefined reward_shaping')
     horizon = 500
 
+    import pdb; pdb.set_trace()
+
     success_list = []
     for i in range(100):
-        print(f'iteration: {i}')
+        print(f'iteration: {i}', sep=' ')
         
         #print('making env')
         vec_env = DummyVecEnv([make_env(env_id, rank, render, reward_shaping, setting, seed + i) for rank in range(n_cpu)])
@@ -99,13 +102,16 @@ if __name__ == '__main__':
             # print('plot pc by using plotly')
             # #o3d.visualization.draw_plotly([pcd])
             
-            #print('rendering env')
-            #vec_env.envs[0].render()
+            if render == 'yes':
+                #print('rendering env')
+                vec_env.envs[0].render()
         
         if rewards[0] >=1:
             success_list.append(True)
+            print('success')
         else:
             success_list.append(False)
+            print('fail')
     
     print(f'success rate: {success_list.count(True) / len(success_list) * 100} %')
     # file_with.py
