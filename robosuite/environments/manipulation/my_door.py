@@ -301,6 +301,15 @@ class MyDoor(SingleArmEnv):
             pos=[-0.05651774593317116, 1.2761224129427358, 1.4879572214102434],
             quat=[0.009905065491771751, 0.006877963156909582, 0.5912228352893879, 0.806418094001364],
         )
+        mujoco_arena.set_camera(
+            camera_name="myview",
+            pos=[
+                -0.2, 
+                -0.335, #0, 
+                2.75#3.0
+                ],
+            quat=[0.7071, 0, 0, 0.7071],
+        )
 
         # initialize objects of interest
         self.door = DoorObject(
