@@ -120,3 +120,6 @@ mjkey.txt
 macros_private.py
 
 weight/
+
+*.pth
+*.png

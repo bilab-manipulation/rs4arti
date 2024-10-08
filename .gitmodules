@@ -1,3 +1,7 @@
 [submodule "thirdparty/segment-anything"]
 	path = thirdparty/segment-anything
 	url = https://github.com/facebookresearch/segment-anything.git
+
+[submodule "thirdparty/yolov10"]
+	path = thirdparty/yolov10
+	url = https://github.com/THU-MIG/yolov10.git
