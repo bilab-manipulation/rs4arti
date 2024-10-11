@@ -297,3 +297,76 @@ class DoorObject(MujocoXMLObject):
         dic = super().important_sites
         dic.update({"handle": self.naming_prefix + "handle"})
         return dic
+
+
+'''
+MADE BY LSH 1010 tested on object 8867 (door)
+'''
+class PartNetMobilityObject(MujocoXMLObject):
+    """
+    Custom Mujoco object loader class that can be used to load different objects from their respective XML files.
+
+    Args:
+        name (str): Name of the object.
+        xml_path (str): Path to the object XML file.
+        friction (3-tuple of float, optional): Friction parameters to override those in the XML file.
+        damping (float, optional): Damping parameter to override the one in the XML file.
+        joints (list, optional): Custom joints to apply to the object (default: None).
+    """
+
+    def __init__(self, name, xml_path, friction=None, damping=None, joints=None):
+        # Initialize with the provided XML path
+        super().__init__(
+            xml_path_completion(xml_path), name=name, joints=joints, obj_type="all", duplicate_collision_geoms=True
+        )
+        # Set relevant body names
+        self.frame_body = self.naming_prefix + "door_frame"
+        self.door_body = self.naming_prefix + "rotation_door"
+        self.latch_body = self.naming_prefix + "handle"
+        self.hinge_joint = self.naming_prefix + "hinge"
+        
+        # Set object-specific parameters if provided
+        # self.friction = friction
+        # self.damping = damping
+        # if self.friction is not None:
+        #     self._set_friction(self.friction)
+        # if self.damping is not None:
+        #     self._set_damping(self.damping)
+
+    # def _set_friction(self, friction):
+    #     """
+    #     Helper function to override object friction directly in the XML.
+
+    #     Args:
+    #         friction (3-tuple of float): Friction parameters to override the ones specified in the XML.
+    #     """
+    #     # Find the joint where friction needs to be updated
+    #     joints = find_elements(root=self.worldbody, tags="joint", return_first=False)
+    #     for joint in joints:
+    #         joint.set("frictionloss", array_to_string(np.array(friction)))
+
+    # def _set_damping(self, damping):
+    #     """
+    #     Helper function to override object damping directly in the XML.
+
+    #     Args:
+    #         damping (float): Damping parameter to override the one specified in the XML.
+    #     """
+    #     joints = find_elements(root=self.worldbody, tags="joint", return_first=False)
+    #     for joint in joints:
+    #         joint.set("damping", array_to_string(np.array([damping])))
+
+    @property
+    def important_sites(self):
+        """
+        Returns:
+            dict: Dictionary of important sites for the object.
+        """
+        # Get the dictionary from the parent class and extend it as needed
+        dic = super().important_sites
+        # Add custom sites if necessary
+        print("dic", dic)
+        import pdb
+        pdb.set_trace()
+        dic.update({"handle": self.naming_prefix + "handle"})
+        return dic

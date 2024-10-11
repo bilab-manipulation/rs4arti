@@ -390,7 +390,6 @@ class MujocoXMLObject(MujocoObject, MujocoXML):
         template["rgba"] = "1 0 0 0"
         template["name"] = "default_site"
         obj.append(ET.Element("site", attrib=template))
-
         return obj
 
     def exclude_from_prefixing(self, inp):

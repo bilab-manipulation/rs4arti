@@ -225,7 +225,6 @@ class MujocoEnv(metaclass=EnvMeta):
         # process the xml before initializing sim
         if self._xml_processor is not None:
             xml = self._xml_processor(xml)
-
         # Create the simulation instance
         self.sim = MjSim.from_xml_string(xml)
 

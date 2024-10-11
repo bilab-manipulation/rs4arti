@@ -3,8 +3,8 @@ from collections import OrderedDict
 import numpy as np
 
 from robosuite.environments.manipulation.single_arm_env import SingleArmEnv
-from robosuite.models.arenas import TableArena
-from robosuite.models.objects import DoorObject
+from robosuite.models.arenas import TableArena, EmptyArena
+from robosuite.models.objects import DoorObject, PartNetMobilityObject
 from robosuite.models.tasks import ManipulationTask
 from robosuite.utils.observables import Observable, sensor
 from robosuite.utils.placement_samplers import UniformRandomSampler
@@ -270,6 +270,7 @@ class MyDoor(SingleArmEnv):
         # Adjust base pose accordingly
         xpos = self.robots[0].robot_model.base_xpos_offset["table"](self.table_full_size[0])
         self.robots[0].robot_model.set_base_xpos(xpos)
+        # xpos = self.robots[0].robot_model.base_xpos_offset['empty']
 
         # load model for table top workspace
         mujoco_arena = TableArena(
@@ -277,7 +278,7 @@ class MyDoor(SingleArmEnv):
             table_offset=self.table_offset,
         )
 
-        # Arena always gets set to zero origin
+        # # Arena always gets set to zero origin
         mujoco_arena.set_origin([0, 0, 0])
 
         # Modify default agentview camera
@@ -292,7 +293,7 @@ class MyDoor(SingleArmEnv):
             quat=[0.56, 0.43, 0.43, 0.56],
         )
         mujoco_arena.set_camera(
-            camera_name="birdtview",
+            camera_name="birdview",
             pos=[-0.2, 0, 3.0],
             quat=[0.7071, 0, 0, 0.7071],
         )
@@ -312,11 +313,18 @@ class MyDoor(SingleArmEnv):
         )
 
         # initialize objects of interest
-        self.door = DoorObject(
-            name="Door",
+        # self.door = DoorObject(
+        #     name="Door",
+        #     friction=0.0,
+        #     damping=0.1,
+        #     lock=self.use_latch,
+        # )
+        
+        self.door = PartNetMobilityObject(
+            name='Door',
+            xml_path='/home/ubuntu/data/datasets/partnet-mobility/dataset/8867/mujoco.xml',
             friction=0.0,
-            damping=0.1,
-            lock=self.use_latch,
+            damping=0.1
         )
 
         # Create placement initializer
@@ -353,14 +361,16 @@ class MyDoor(SingleArmEnv):
 
         # Additional object references from this env
         self.object_body_ids = dict()
+        
+
         self.object_body_ids["door"] = self.sim.model.body_name2id(self.door.door_body)
         self.object_body_ids["frame"] = self.sim.model.body_name2id(self.door.frame_body)
         self.object_body_ids["latch"] = self.sim.model.body_name2id(self.door.latch_body)
-        self.door_handle_site_id = self.sim.model.site_name2id(self.door.important_sites["handle"])
+        # self.door_handle_site_id = self.sim.model.site_name2id(self.door.important_sites["handle"])
         self.hinge_qpos_addr = self.sim.model.get_joint_qpos_addr(self.door.joints[0])
         if self.use_latch:
             self.handle_qpos_addr = self.sim.model.get_joint_qpos_addr(self.door.joints[1])
-
+        
     def _setup_observables(self):
         """
         Sets up observables to be used for this environment. Creates object-based observables if enabled
@@ -381,31 +391,33 @@ class MyDoor(SingleArmEnv):
             def door_pos(obs_cache):
                 return np.array(self.sim.data.body_xpos[self.object_body_ids["door"]])
 
-            @sensor(modality=modality)
-            def handle_pos(obs_cache):
-                return self._handle_xpos
+            # @sensor(modality=modality)
+            # def handle_pos(obs_cache):
+            #     return self._handle_xpos
 
-            @sensor(modality=modality)
-            def door_to_eef_pos(obs_cache):
-                return (
-                    obs_cache["door_pos"] - obs_cache[f"{pf}eef_pos"]
-                    if "door_pos" in obs_cache and f"{pf}eef_pos" in obs_cache
-                    else np.zeros(3)
-                )
+            # @sensor(modality=modality)
+            # def door_to_eef_pos(obs_cache):
+            #     return (
+            #         obs_cache["door_pos"] - obs_cache[f"{pf}eef_pos"]
+            #         if "door_pos" in obs_cache and f"{pf}eef_pos" in obs_cache
+            #         else np.zeros(3)
+            #     )
 
-            @sensor(modality=modality)
-            def handle_to_eef_pos(obs_cache):
-                return (
-                    obs_cache["handle_pos"] - obs_cache[f"{pf}eef_pos"]
-                    if "handle_pos" in obs_cache and f"{pf}eef_pos" in obs_cache
-                    else np.zeros(3)
-                )
+            # @sensor(modality=modality)
+            # def handle_to_eef_pos(obs_cache):
+            #     return (
+            #         obs_cache["handle_pos"] - obs_cache[f"{pf}eef_pos"]
+            #         if "handle_pos" in obs_cache and f"{pf}eef_pos" in obs_cache
+            #         else np.zeros(3)
+            #     )
 
             @sensor(modality=modality)
             def hinge_qpos(obs_cache):
                 return np.array([self.sim.data.qpos[self.hinge_qpos_addr]])
 
-            sensors = [door_pos, handle_pos, door_to_eef_pos, handle_to_eef_pos, hinge_qpos]
+            # sensors = [door_pos, handle_pos, door_to_eef_pos, handle_to_eef_pos, hinge_qpos]
+            # sensors = [door_pos, handle_pos, door_to_eef_pos, handle_to_eef_pos, hinge_qpos]
+            sensors = [door_pos, hinge_qpos]
             names = [s.__name__ for s in sensors]
 
             # Also append handle qpos if we're using a locked door version with rotatable handle
@@ -482,6 +494,7 @@ class MyDoor(SingleArmEnv):
         Returns:
             np.array: Door handle (x,y,z)
         """
+        raise NotImplementedError
         return self.sim.data.site_xpos[self.door_handle_site_id]
 
     @property
@@ -492,4 +505,6 @@ class MyDoor(SingleArmEnv):
         Returns:
             np.array: (x,y,z) distance between handle and eef
         """
+        # since we don't calculate handle2eef, we remove this feature for debugging
+        raise NotImplementedError
         return self._handle_xpos - self._eef_xpos

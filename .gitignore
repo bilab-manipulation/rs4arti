@@ -122,6 +122,7 @@ macros_private.py
 weight/
 
 *.pth
+*.pt
 *.png
 
 test_lsh/

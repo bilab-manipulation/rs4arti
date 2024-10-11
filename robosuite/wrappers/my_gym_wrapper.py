@@ -61,8 +61,18 @@ class MyGymWrapper(Wrapper, gym.Env):
             # 'robot0_eef_vel_ang',
             'robot0_gripper_qpos',
             # 'robot0_gripper_qvel',
-            # 'agentview_image',
-            # 'agentview_depth',
+            'agentview_image',
+            'agentview_depth',
+            'frontview_image',
+            'frontview_depth',
+            'birdview_image',
+            'birdview_depth',
+            'sideview_image',
+            'sideview_depth',
+            'myview_image',
+            'myview_depth',
+            
+            
             # 'door_pos',
             # 'handle_pos',
             # 'door_to_eef_pos',
@@ -128,6 +138,8 @@ class MyGymWrapper(Wrapper, gym.Env):
                 np.random.seed(seed)
             else:
                 raise TypeError("Seed must be an integer type!")
+            
+        
         ob_dict = self.env.reset()
         return self._flatten_obs(ob_dict), {}
 

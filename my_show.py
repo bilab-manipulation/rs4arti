@@ -6,6 +6,7 @@ import argparse
 
 from robosuite.utils.camera_utils import get_camera_intrinsic_matrix
 from my_utils import make_env
+import time
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='')
@@ -30,16 +31,18 @@ if __name__ == '__main__':
         ValueError('undefined reward_shaping')
     horizon = 500
 
-    import pdb; pdb.set_trace()
+    # import pdb; pdb.set_trace()
 
     success_list = []
-    for i in range(100):
+    for i in range(1):
         print(f'iteration: {i}', sep=' ')
+        tic = time.time()
+        
         
         #print('making env')
         vec_env = DummyVecEnv([make_env(env_id, rank, render, reward_shaping, setting, seed + i) for rank in range(n_cpu)])
         
-        #print('load model')
+        # print('load model')
         model = SAC.load(env_id, env=vec_env)
 
         #print('reset env')
@@ -105,13 +108,13 @@ if __name__ == '__main__':
             if render == 'yes':
                 #print('rendering env')
                 vec_env.envs[0].render()
-        
         if rewards[0] >=1:
             success_list.append(True)
             print('success')
         else:
             success_list.append(False)
             print('fail')
+        print("one iteration", time.time() - tic)
     
     print(f'success rate: {success_list.count(True) / len(success_list) * 100} %')
     # file_with.py
