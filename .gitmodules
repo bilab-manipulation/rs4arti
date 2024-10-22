@@ -5,3 +5,11 @@
 [submodule "thirdparty/yolov10"]
 	path = thirdparty/yolov10
 	url = https://github.com/THU-MIG/yolov10.git
+
+[submodule "thirdparty/GroundingDINO"]
+	path = thirdparty/GroundingDINO
+	url = https://github.com/IDEA-Research/GroundingDINO.git
+
+[submodule "thirdparty/mmdetection"]
+	path = thirdparty/mmdetection
+	url = https://github.com/LimSeunghyeon1/mmdetection.git
